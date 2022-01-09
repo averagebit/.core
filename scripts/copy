@@ -1,10 +1,10 @@
 #!/usr/local/bin/bash
 
-if [[ -f "$1" ]]; then
-  [[ -n "$(command -v pbcopy)" ]] && pbcopy < "$1" && exit 0
-  [[ -n "$(command -v xclip)" ]] && xclip < "$1" && exit 0
+if [[ -r "$1" ]]; then
+  [[ -n "$(command -v pbcopy)" ]] && exec pbcopy < "$1"
+  [[ -n "$(command -v xclip)" ]] && exec xclip < "$1"
 fi
 
-[[ -n "$(command -v pbcopy)" ]] && echo "$1" | pbcopy && exit 0
-[[ -n "$(command -v xclip)" ]] && echo "$1" | xclip && exit 0
+[[ -n "$(command -v pbcopy)" ]] && exec pbcopy <<< "$1"
+[[ -n "$(command -v xclip)" ]] && exec xclip <<< "$1"
 
