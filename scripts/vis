@@ -1,0 +1,45 @@
+#!/usr/local/bin/bash
+
+if [[ -z "${SCRIPTS}" ]]; then
+  echo "error: The \$SCRIPTS path environment variable is not set."
+  exit 1
+fi
+
+if [[ -z "$1" ]]; then
+  echo "error: Expected script name, received none."
+  exit 1
+fi
+
+list() {
+  exec find "${SCRIPTS}" -name "*" -exec basename {} \;
+}
+
+check() {
+  [[ -z "$1" ]] && exec shellcheck "${SCRIPTS}/"*
+  exec shellcheck "${SCRIPTS}/$*"
+}
+
+main() {
+  local name="$1"
+
+  [[ -f "${SCRIPTS}/${name}" ]] && exec vi "${SCRIPTS}/${name}"
+
+  touch "${SCRIPTS}/${name}"
+  chmod u+x "${SCRIPTS}/${name}"
+  exec vi "${SCRIPTS}/${name}"
+}
+
+if [[ -n "${COMP_LINE}" ]]; then
+  prefix=$(echo "${COMP_LINE}" | cut -d " " -f 2)
+  [[ "${prefix}" == "" ]] && list && exit 0
+  [[ "${prefix}" == "$(list | grep -w "${prefix}")" ]] && exit 0
+  list | grep ^"${prefix}" && exit 0
+fi
+
+case "$1" in
+  ls) list ;;
+  check) shift; check "$@" ;;
+  rm) rm -i "${SCRIPTS}/$2"; exit 0 ;;
+  *) main "$1"; exit 0 ;;
+esac
+

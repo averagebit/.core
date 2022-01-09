@@ -1,0 +1,33 @@
+#!/usr/local/bin/bash
+
+is_repo() {
+  git -C . rev-parse
+  case "$?" in
+    0) true ;;
+    *) false ;;
+  esac
+}
+
+open() {
+  [[ $(command -v /usr/bin/open) ]] && exec /usr/bin/open "$@"
+  [[ $(command -v xdg-open) ]] && exec xdg-open "$@"
+}
+
+main() {
+  [[ -n "$1" ]] && open "$@"
+
+  if is_repo; then
+    url="$(git config --get remote.origin.url)"
+    case "${url}" in
+      http*) open "${url}" ;;
+      git*)
+        url="${url#*:}"
+        url="${url%*.git}"
+        url=https://github.com/"${url}"
+        open "${url}"
+        ;;
+    esac
+  fi
+}
+
+main "$@"

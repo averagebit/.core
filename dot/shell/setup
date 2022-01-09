@@ -1,0 +1,25 @@
+#!/usr/local/bin/bash
+
+is_darwin() {
+  case "$(uname -s)" in
+      *Darwin*) true ;;
+      *darwin*) true ;;
+      *) false ;;
+  esac
+}
+
+if is_darwin; then
+  if [[ ! -f "${HOME}/.hushlogin" ]]; then
+    touch "${HOME}/.hushlogin"
+  fi
+else
+  if [[ ! -f "${HOME}/.sudo_as_admin_successful" ]]; then
+    touch "${HOME}/.sudo_as_admin_successful"
+  fi
+fi
+
+ln -sf "${PWD}/bashrc" "${HOME}/.bashrc"
+ln -sf "${PWD}/profile" "${HOME}/.profile"
+ln -sf "${PWD}/dircolors" "${HOME}/.dircolors"
+ln -sf "${PWD}/inputrc" "${HOME}/.inputrc"
+

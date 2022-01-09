@@ -1,0 +1,186 @@
+" Initialize settings
+if has('vim_starting')
+  " Set data/cache directory as $XDG_CACHE_HOME/vim
+  let $DATA_PATH = expand(($XDG_CACHE_HOME ? $XDG_CACHE_HOME : '~/.cache') . '/vim', 1)
+
+	" Install vim-plug and plugins if not installed
+	if empty(glob('~/.vim/autoload/plug.vim'))
+		silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+	endif
+
+	" Disable arrows and map leaders
+	let g:elite_mode=1
+	let g:mapleader="\<Space>"
+	let g:maplocalleader=';'
+
+	" Enable syntax and 24-bit color support
+	syntax on
+	if (has("termguicolors"))
+		set termguicolors
+	endif
+endif
+
+" Disable vim distribution plugins
+let g:loaded_gzip = 1
+let g:loaded_tar = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_zip = 1
+let g:loaded_zipPlugin = 1
+
+let g:loaded_getscript = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_vimball = 1
+let g:loaded_vimballPlugin = 1
+
+" let g:loaded_matchit = 1
+" let g:loaded_matchparen = 1
+let g:loaded_2html_plugin = 1
+let g:loaded_logiPat = 1
+let g:loaded_rrhelper = 1
+
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrwSettings = 1
+let g:loaded_netrwFileHandlers = 1
+
+" Load plugins
+call plug#begin(expand($DATA_PATH . '/plugins'))
+  Plug 'sheerun/vim-polyglot' " Language support
+	Plug 'morhetz/gruvbox'      " Gruvbox colorscheme
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy search
+call plug#end()
+
+" FZF
+nmap <C-p> :FZF<CR>
+
+" Gruvbox
+let g:gruvbox_bold='0'
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_contrast_light='hard'
+let g:gruvbox_termcolors='256'
+
+" Settings
+colorscheme gruvbox            " Colorscheme
+set background=dark            " Colorscheme background
+set mouse=nv                   " Disable mouse in command-line mode
+set nocompatible               " Vi compatibility setting
+set synmaxcol=2500             " Don't syntax highlight long lines
+set history=2000               " Size of history to retain
+set clipboard=unnamed          " Use unnamed clipboard
+set viminfo='20,<1000,s1000    " Prevents truncated yanks, deletes etc.
+set foldmethod=manual          " Disable automatic folding
+set nofoldenable               " Disable automatic folding
+set expandtab                  " Expand tabs to spaces
+set tabstop=2                  " The number of spaces a tab is
+set shiftwidth=2               " Number of spaces to use in auto(indent)
+set softtabstop=-1             " Automatically keeps in sync with shiftwidth
+set smarttab                   " Tab insert blanks according to 'shiftwidth'
+set autoindent                 " Use same indenting on new lines
+set smartindent                " Smart autoindenting on new lines
+set shiftround                 " Round indent to multiple of 'shiftwidth'
+set nowrap                     " Disable text wrapping
+set timeout ttimeout           " Configure timeouts
+set timeoutlen=500             " Time out on mappings
+set ttimeoutlen=10             " Time out on key codes
+set updatetime=200             " Idle time to write swap and trigger CursorHold
+set redrawtime=1500            " Time in milliseconds for stopping display redraw
+set ignorecase                 " Search ignoring case
+set smartcase                  " Keep case when searching with *
+set infercase                  " Adjust case in insert completion mode
+set incsearch                  " Incremental search
+set wrapscan                   " Searches wrap around the end of the file
+set hlsearch                   " Search highlight
+set splitbelow splitright      " Always split to the bottom right
+set switchbuf=useopen,vsplit   " Jump to the first open window
+set backspace=indent,eol,start " Intuitive backspacing in insert mode
+set scrolloff=2                " Keep at least 2 lines above/below
+set sidescrolloff=5            " Keep at least 5 lines left/right
+set nu rnu                     " Hybrid line numbers
+set cmdheight=1                " Command line height
+set laststatus=0               " Display the status line
+set showmode                   " Show mode in cmd window
+set completeopt=menu,menuone   " Always show menu, even for one item
+set completeopt+=noselect      " Do not select a match in the menu
+set showtabline=2              " Always show the tabs line
+set pumheight=15               " Pop-up menu's line height
+set helpheight=12              " Minimum help window height
+set previewheight=12           " Completion preview height
+set noequalalways              " Don't resize windows on split or close
+set colorcolumn=72             " Colur column width/visilbility
+set signcolumn=no              " Sign column visibility
+set cmdwinheight=5             " Command-line lines
+set formatoptions+=1           " Don't break lines after a one-letter word
+set formatoptions-=o           " Disable comment-continuation (normal 'o'/'O')
+set re=0                       " Regex engine
+set showcmd                    " Show command in status line
+set autoread                   " Autoread if third party changes are detected
+set autowrite                  " Save on buffer leave
+set autowriteall               " Save on buffer leave
+
+" Autoread
+au FocusLost,WinLeave,BufLeave * :silent! noautocmd wall
+
+" UI Symbols
+set listchars=trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
+
+" Statusline
+set statusline=\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %Y\ 
+
+" Allow misspellings
+cnoreabbrev W w
+cnoreabbrev qw wq
+cnoreabbrev Wq wq
+cnoreabbrev WQ wq
+cnoreabbrev Qa qa
+cnoreabbrev Bd bd
+cnoreabbrev bD bd
+
+" Resize splits with arrow keys.
+if get(g:, 'elite_mode')
+	nnoremap <silent><Up>    :resize +1<CR>
+	nnoremap <silent><Down>  :resize -1<CR>
+	nnoremap <silent><Left>  :vertical resize +1<CR>
+	nnoremap <silent><Right> :vertical resize -1<CR>
+endif
+
+" Source .vimrc
+nnoremap <Leader>rr :source ~/.vimrc<CR>
+
+" Navigation
+vnoremap gh ^
+vnoremap gl $
+vnoremap gj G
+vnoremap gk gg
+nnoremap gh ^
+nnoremap gl $
+nnoremap gj G
+nnoremap gk gg
+
+" Re-select blocks after indenting in visual/select mode
+xnoremap < <gv
+xnoremap > >gv|
+
+" Indent and jump to first non-blank character linewise
+nmap >>  >>_
+nmap <<  <<_
+
+" Drag current line/s vertically and auto-indent
+nnoremap <Leader>k :m-2<CR>
+nnoremap <Leader>j :m+<CR>
+vnoremap <Leader>k :m'<-2<CR>gv=gv
+vnoremap <Leader>j :m'>+<CR>gv=gv
+
+" Clear highlight with return
+nnoremap <CR> :let @/ = ""<CR><CR>
+
+" Color overrides
+hi TabLine ctermbg=233 ctermfg=white cterm=NONE
+hi TabLineSel ctermbg=233 ctermfg=green cterm=NONE
+hi TabLineFill ctermbg=233 ctermfg=white
+hi StatusLine ctermfg=233
+hi StatusLineNC ctermfg=233
+hi VertSplit ctermbg=233 ctermfg=233
+hi ColorColumn ctermbg=235
+hi Visual ctermfg=darkgray ctermbg=black
+

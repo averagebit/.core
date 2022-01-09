@@ -1,0 +1,3 @@
+#!/usr/local/bin/bash
+
+exec lynx "https://duckduckgo.com/lite?q=$(urlencode "$*")"

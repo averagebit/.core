@@ -1,0 +1,8 @@
+#!/usr/local/bin/bash
+
+case "$1" in
+  v*) exec vi "${HOME}/.vimrc" ;;
+  t*) exec vi "${HOME}/.tmux.conf" ;;
+  b*) exec vi "${HOME}/.bashrc" ;;
+  a*) exec vi "${HOME}/.config/alacritty.yml" ;;
+esac

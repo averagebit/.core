@@ -1,0 +1,65 @@
+tabspaces: 2
+alt_send_esc: true
+background_opacity: 1
+live_config_reload: true
+draw_bold_text_with_bright_colors: true
+
+env:
+  TERM: xterm-256color
+
+window:
+  startup_mode: Windowed
+
+selection:
+  save_to_clipboard: true
+
+url:
+  launcher:
+    program: open
+    args: []
+  modifiers: None
+
+mouse:
+    hide_when_typing: true
+ 
+key_bindings:
+  # (MacOS only)
+  - { key: Return, mods: Control, action: ToggleSimpleFullscreen }
+
+font:
+  normal:
+    family: Fira Code
+  bold:
+    family: Fira Code
+  italic:
+    family: Fira Code
+  size: 12.0
+  offset:
+    x: 0
+    y: 3
+
+schemes:
+  gruvbox: &gruvbox
+    primary:
+      background: '#1c1c1c'
+      foreground: '#ebdbb2'
+    normal:
+      black:   '#282828'
+      red:     '#cc241d'
+      green:   '#98971a'
+      yellow:  '#d79921'
+      blue:    '#458588'
+      magenta: '#b16286'
+      cyan:    '#689d6a'
+      white:   '#a89984'
+    bright:
+      black:   '#928374'
+      red:     '#fb4934'
+      green:   '#b8bb26'
+      yellow:  '#fabd2f'
+      blue:    '#83a598'
+      magenta: '#d3869b'
+      cyan:    '#8ec07c'
+      white:   '#ebdbb2'
+
+colors: *gruvbox

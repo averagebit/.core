@@ -1,0 +1,26 @@
+#!/usr/local/bin/bash
+
+echo "!ip  - send the paragraph to shell command
+<ip  - unindent paragraph
+>ip  - indent paragraph
+caw  - change around word
+ciw  - change word
+cw   - change to end of word
+daW  - delete around larger word
+daf  - delete function
+dap  - delete around paragraph
+daw  - delete around word
+dd   - delete the line
+diW  - delete larger word
+dif  - delete inner function
+dip  - delete paragraph
+diw  - delete word
+dw   - delete to beginning of next word
+ea   - append to word
+gq   - wrap selected lines
+gqap - wrap around paragraph
+gqip - wrap paragraph
+yaf  - yank function
+yap  - yank around paragraph
+yif  - yank inner function
+yip  - yank paragraph"

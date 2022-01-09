@@ -1,0 +1,236 @@
+#!/usr/local/bin/bash
+#
+# An implementation of the pomodoro technique in bash made with tmux in
+# mind.
+# 
+# If a session has been started and the script is called without an
+# argument it will display the remaining time until the next session/break.
+# 
+# To use with tmux ensure the status-line interval is adjusted to
+# refresh every one second `set -g status-interval 1`. Then add `pomo`
+# to the status line:
+# `set -g status-right "#(pomo) %A, %B %-e, %Y, %-l:%M:%S%p %Z%0z"`
+# 
+
+set -e
+
+: "${EXE:="${0##*/}"}"
+
+declare -A CONFIG
+declare -A HELP
+
+HELP[main]="${EXE}
+
+If a session has been started and the script is called without an
+argument it will display the remaining time until the next session/break.
+
+USAGE: ${EXE} [SUBCOMMAND] [ARG]
+
+SUBCOMMANDS:
+    start             Start a pomo session
+    stop              Stop and reset configuration for a new pomo session
+    duration [ARG]    Print or set the duration of a pomo session
+    frequency [ARG]   Print or set the long break frequency
+    long [ARG]        Print or set the long break interval
+    short [ARG]       Print or set the short break interval
+    session [ARG]     Print or set the current pomo session number
+    sessions [ARG]    Print or set the total pomo sessions
+    config            Print the current configuration
+"
+
+initialize() {
+  : "${CONFIG[session_emoji]:=🍅}"
+  : "${CONFIG[session_duration]:=25}"
+  : "${CONFIG[session_current]:=1}"
+  : "${CONFIG[session_total]:=8}"
+  : "${CONFIG[session_long]:=25}"
+  : "${CONFIG[session_short]:=10}"
+  : "${CONFIG[session_end]:=}"
+  : "${CONFIG[session_break]:=false}"
+  : "${CONFIG[session_long_frequency]:=4}"
+  : "${CONFIG[emoji_work]:=🍅}"
+  : "${CONFIG[emoji_break]:=🧘}"
+  : "${CONFIG[emoji_free]:=🏖}"
+  config_write
+}
+
+config_path() {
+  local dir path
+  dir="${HOME}/.config/${EXE}"
+  path="${dir}/config"
+
+  if [[ ! -r "${path}" ]]; then
+    mkdir -p "${dir}" && touch "${path}"
+  fi
+
+  echo "${path}"
+}
+
+config_read() {
+  local config_path
+  config_path="$(config_path)"
+
+  while IFS= read -r line; do
+    if [[ "${line}" =~ ^([^=]+)=(.+)$ ]]; then
+      CONFIG["${BASH_REMATCH[1]}"]="${BASH_REMATCH[2]}"
+    fi
+  done < "${config_path}"
+}
+
+config_write() {
+  local config_path
+  config_path="$(config_path)"
+
+  for key in "${!CONFIG[@]}"; do
+    echo "${key}=${CONFIG[${key}]}"
+  done > "${config_path}"
+}
+
+command_start() {
+  local now emoji_work session_duration session_end
+  now="$(date +%s)"
+  emoji_work="${CONFIG[emoji_work]}"
+  session_duration="${CONFIG[session_duration]}"
+  session_end="$(((session_duration * 60) + now))"
+
+  CONFIG[session_break]='false'
+  CONFIG[session_emoji]="${emoji_work}"
+  CONFIG[session_end]="${session_end}"
+  config_write
+}
+
+command_stop() {
+  local emoji_work
+  emoji_work="${CONFIG[emoji_work]}"
+
+  CONFIG[session_current]=1
+  CONFIG[session_break]='false'
+  CONFIG[session_emoji]="${emoji_work}"
+  CONFIG[session_end]=
+  config_write
+}
+
+command_session() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_current]}" && exit 0
+  CONFIG[session_current]="$1"
+  config_write
+}
+
+command_sessions() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_total]}" && exit 0
+  CONFIG[session_total]="$1"
+  config_write
+}
+
+command_duration() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_duration]}" && exit 0
+  CONFIG[session_duration]="$1"
+  config_write
+}
+
+command_frequency() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_long_frequency]}" && exit 0
+  CONFIG[session_long_frequency]="$1"
+  config_write
+}
+
+command_long() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_long]}" && exit 0
+  CONFIG[session_long]="$1"
+  config_write
+}
+
+command_short() {
+  [[ -z "$1" ]] && echo "${CONFIG[session_short]}" && exit 0
+  CONFIG[session_short]="$1"
+  config_write
+}
+
+command_print() {
+  [[ -z "${CONFIG[session_end]}" ]] && exit 0
+
+  local now diff format session_emoji seconds minutes hours \
+        session_current session_total session_end session_duration \
+        session_break session_short session_long session_long_frequency
+
+  now="$(date +%s)"
+  session_break="${CONFIG[session_break]}"
+  session_current="${CONFIG[session_current]}"
+  session_duration="${CONFIG[session_duration]}"
+  session_long="${CONFIG[session_long]}"
+  session_long_frequency="${CONFIG[session_long_frequency]}"
+  session_short="${CONFIG[session_short]}"
+  session_total="${CONFIG[session_total]}"
+  emoji_work="${CONFIG[emoji_work]}"
+  emoji_break="${CONFIG[emoji_break]}"
+  emoji_free="${CONFIG[emoji_free]}"
+  session_emoji="${CONFIG[session_emoji]}"
+  session_end="${CONFIG[session_end]}"
+
+  # If all sessions are complete start a negative countdown from `now`
+  if [[ "${session_current}" == "${session_total}" ]]; then
+    command_stop
+    CONFIG[session_emoji]="${emoji_free}"
+    CONFIG[session_end]="${now}"
+    config_write
+    exit 0
+  fi
+
+  # If last session was a break starts a regular session
+  if [[ "${now}" == "${session_end}" && "${session_break}" == 'true' ]]; then
+    CONFIG[session_end]="$(((session_duration * 60) + now))"
+    CONFIG[session_break]='false'
+    CONFIG[session_emoji]="${emoji_work}"
+    config_write
+    exit 0
+  fi
+
+  # If last session was regular starts a break session
+  if [[ "${now}" == "${session_end}" && "${session_break}" == 'false' ]]; then
+    CONFIG[session_current]="$((session_current + 1))"
+    CONFIG[session_break]='true'
+    CONFIG[session_emoji]="${emoji_break}"
+
+    if ((session_current % session_long_frequency)); then
+      CONFIG[session_end]="$(((session_short * 60) + now))"
+    else
+      CONFIG[session_end]="$(((session_long * 60) + now))"
+    fi
+
+    config_write
+    exit 0
+  fi
+
+  # Hacky but cross-platform way of formatting the time.
+  diff="$((session_end - now))"
+  seconds="$((diff % 60))s"
+  minutes="$((diff % 3600 / 60))m "
+  hours="$((diff % 86400 / 3600))h "
+
+  [[ ${minutes} == '0m ' ]] && minutes=''
+  [[ ${hours} == '0h ' ]] && hours=''
+
+  format="${session_emoji} ${hours}${minutes}${seconds}"
+  echo "${format}"
+}
+
+main() {
+  config_read
+  initialize
+
+  case "$1" in
+    "") command_print; exit 0 ;;
+    stop) command_stop; exit 0 ;;
+    start) command_start; exit 0 ;;
+    duration) shift; command_duration "$*"; exit 0 ;;
+    short) shift; command_short "$*"; exit 0 ;;
+    long) shift; command_long "$*"; exit 0 ;;
+    freq*) shift; command_frequency "$*"; exit 0 ;;
+    session) shift; command_session "$*"; exit 0 ;;
+    sessions) shift; command_sessions "$*"; exit 0 ;;
+    conf*) exec cat "$(config_path)" ;;
+    *) echo "${HELP[main]}" && exit 1 ;;
+  esac
+}
+
+main "$@"

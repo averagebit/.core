@@ -1,0 +1,15 @@
+#!/usr/local/bin/bash
+
+unset CDPATH
+
+if [[ "${USER}" ]]; then
+  mkdir -p "${HOME}/Workspaces/vms" \
+    "${HOME}/Workspaces/repos/github/${USER}" \
+    "${HOME}/Workspaces/repos/gitlab/${USER}"
+fi
+
+for entry in "${PWD}"/dot/*; do
+  cd "${entry}" && ./setup
+  cd - || return
+done
+

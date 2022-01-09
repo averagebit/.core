@@ -1,0 +1,7 @@
+#!/usr/local/bin/bash
+
+if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
+  git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+fi
+
+ln -sf "${PWD}/tmux.conf" "${HOME}/.tmux.conf"

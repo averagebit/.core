@@ -1,0 +1,7 @@
+#!/usr/local/bin/bash
+
+[[ -z "${CONTAINER_APP}" ]] && CONTAINER_APP=docker
+
+exec "${CONTAINER_APP}" run --rm -it \
+    --name lynx \
+    averagebit/lynx "${*:--h}"

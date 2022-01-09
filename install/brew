@@ -1,0 +1,45 @@
+#!/bin/bash
+
+export HOMEBREW_CASK_OPTS="--require-sha"
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+export HOMEBREW_NO_ANALYTICS=1
+
+if [[ -z "$(command -v brew)" ]]; then
+  echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  brew update && brew upgrade && brew cleanup && brew analytics off
+fi
+
+declare -a REPOSITORIES=("homebrew/cask-versions")
+
+declare -a BOTTLES=("bash" \
+  "bash-completion" \
+  "ctags" \
+  "curl" \
+  "gh" \
+  "git" \
+  "gnupg" \
+  "shellcheck" \
+  "tmux" \
+  "tree" \
+)
+
+declare -a CASKS=("firefox")
+
+if [[ "${#REPOSITORIES[@]}" != 0 ]]; then
+  for repo in "${REPOSITORIES[@]}"; do
+    brew tap "${repo}"
+  done
+fi
+
+if [[ "${#BOTTLES[@]}" != 0 ]]; then
+  for bottle in "${BOTTLES[@]}"; do
+    [[ ! -d "$(brew --prefix)"/Cellar/"${bottle}" ]] && brew install "${bottle}"
+  done
+fi
+
+if [[ "${#CASKS[@]}" != 0 ]]; then
+  for cask in "${CASKS[@]}"; do
+    [[ ! -d "$(brew --prefix)"/Caskroom/"${cask}" ]] && brew install --cask "${cask}"
+  done
+fi
+

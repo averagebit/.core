@@ -1,0 +1,12 @@
+#!/usr/local/bin/bash
+
+ln -sf "${PWD}/gitignore" "${HOME}/.gitignore"
+
+git config --global core.excludesfile "${HOME}/.gitignore"
+[[ -n "${GIT_USER}" ]] && git config --global user.name "${GIT_USER}"
+[[ -n "${GIT_EMAIL}" ]] && git config --global user.email "${GIT_EMAIL}"
+[[ -n "${GIT_DEFAULT_BRANCH}" ]] && git config --global init.defaultbranch "${GIT_DEFAULT_BRANCH}"
+[[ -n "${GIT_GPG_KEY}" ]] && git config --global user.signingkey "${GIT_GPG_KEY}"
+[[ -n "${GIT_GPG_SIGN_COMMIT}" ]] && git config --global commit.gpgsign "${GIT_GPG_SIGN_COMMIT}"
+[[ -n "${GIT_GPG_SIGN_TAG}" ]] && git config --global tag.gpgsign "${GIT_GPG_SIGN_TAG}"
+[[ -n "${GIT_GPG_PROGRAM}" ]] && git config --global gpg.program "${GIT_GPG_PROGRAM}"
