@@ -1,0 +1,173 @@
+#!/usr/local/bin/bash
+# Work in progress note management tool
+
+set -e
+
+: "${EXE:="${0##*/}"}"
+: "${GHREPOS:="${HOME}/Workspaces/repos/github/${USER}"}"
+
+declare -A CONFIG
+
+initialize() {
+  : "${CONFIG[editor]:='vi'}"
+  : "${CONFIG[mode]:='private'}"
+  : "${CONFIG[private]:="${HOME}/Private/${EXE}"}"
+  : "${CONFIG[public]:="${GHREPOS}/${EXE}"}"
+  config_write
+}
+
+# Utility
+config_path() {
+  local dir path
+  dir="${HOME}/.config/${EXE}"
+  path="${dir}/config"
+
+  if [[ ! -r "${path}" ]]; then
+    mkdir -p "${dir}" && touch "${path}"
+  fi
+
+  echo "${path}"
+}
+
+config_read() {
+  local config_path
+  config_path="$(config_path)"
+
+  while IFS= read -r line; do
+    if [[ "${line}" =~ ^([^=]+)=(.+)$ ]]; then
+      CONFIG["${BASH_REMATCH[1]}"]="${BASH_REMATCH[2]}"
+    fi
+  done < "${config_path}"
+}
+
+config_write() {
+  local config_path
+  config_path="$(config_path)"
+
+  for key in "${!CONFIG[@]}"; do
+    echo "${key}=${CONFIG[${key}]}"
+  done | sort > "${config_path}"
+}
+
+isostamp() {
+  date +%Y%m%d%H%M%S
+}
+
+newest() {
+  head -n 1 < <(/bin/ls -At "${1:-.}")
+}
+
+zet_mode_path() {
+  [[ ${CONFIG[mode]} == 'public' ]] && echo "${CONFIG[public]}"
+  [[ ${CONFIG[mode]} == 'private' ]] && echo "${CONFIG[private]}"
+}
+
+zet_dir() {
+  local dir path
+  path="$1"
+  dir="$(dirname "${path}")"
+  echo "${dir}"
+}
+
+zet_id() {
+  local id path
+  path="$1"
+  id="$(basename "$(dirname "${match}")")"
+  echo "${id}"
+}
+
+zet_title() {
+  local title path
+  path="$1"
+  IFS= read -r title < "${path}"
+  title="${title#*# }"
+  echo "${title}"
+}
+
+zet_commit() {
+  local title dir path
+  path="$1"
+  title="$(zet_title "${path}")"
+  dir="$(zet_dir "${path}")"
+
+  git add "${dir}"
+  git commit -m "${title}"
+  exec git push -u origin main
+}
+
+# Commands
+command_create() {
+  local id dir path editor title
+  id="$(isostamp)"
+  dir="$(zet_mode_path)/${id}"
+  path="${dir}/README.md"
+  editor="${CONFIG[editor]}"
+  title="$1"
+
+  mkdir -p "${dir}" && touch "${path}"
+  echo "# ${title}" > "${path}"
+  echo "Created $(date +"%Y-%m-%d %H:%M:%S")" >> "${path}"
+  "${editor}" "${path}"
+  read -rp 'Commit? ' res
+  [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
+}
+
+command_edit() {
+  local match matches editor title
+  editor="${CONFIG[editor]}"
+
+  readarray -t matches < <(grep --exclude-dir=.git -irl "$*" "$(zet_mode_path)")
+
+  if [[ ${#matches[@]} -eq 0 ]]; then
+    exit 0
+  elif [[ ${#matches[@]} -gt 1 ]]; then
+    # TODO: @feat: display title instead of path in select menu
+    # TODO: @refactor: dry
+    select match in "${matches[@]}"; do
+      title="$(zet_title "${match}")"
+      "${editor}" "${match}"
+      read -rp 'Commit? ' res
+      [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
+    done
+  else
+    "${editor}" "${match}"
+    read -rp 'Commit? ' res
+    [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
+  fi
+}
+
+command_mode() {
+  echo "zet: ${CONFIG[mode]}"
+}
+
+command_public() {
+  echo 'public'
+  CONFIG[mode]='public'
+  config_write
+}
+
+command_private() {
+  CONFIG[mode]='private'
+  config_write
+}
+
+command_config() {
+  exec cat "$(config_path)"
+}
+
+main() {
+  config_read
+  initialize
+
+  case "$1" in
+    create) shift; command_create "$*"; exit 0 ;;
+    edit) shift; command_edit "$*"; exit 0 ;;
+    mode) command_mode; exit 0 ;;
+    public) command_public; exit 0 ;;
+    private) command_private; exit 0 ;;
+    conf*) command_config; exit 0 ;;
+    *)
+  esac
+}
+
+main "$@"
