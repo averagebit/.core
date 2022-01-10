@@ -49,7 +49,7 @@ export DOCKER_CONTENT_TRUST=0
 
 # Path
 export PATH="${SCRIPTS}:${HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
-export CDPATH="${PWD}:${WORKSPACES}:${REPOS}:${GHREPOS}:${GLREPOS}:${CORE}:${HOME}"
+export CDPATH=".:${WORKSPACES}:${REPOS}:${GHREPOS}:${GLREPOS}:${CORE}:${HOME}"
 
 # Dircolors
 if [[ $(command -v dircolors) ]]; then
