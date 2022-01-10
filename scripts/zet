@@ -90,6 +90,7 @@ zet_commit() {
   title="$(zet_title "${path}")"
   dir="$(zet_dir "${path}")"
 
+  cd "$(zet_mode_path)"
   git add "${dir}"
   git commit -m "${title}"
   exec git push -u origin main
@@ -113,7 +114,7 @@ command_create() {
 }
 
 command_edit() {
-  local match matches editor title
+  local match matches editor
   editor="${CONFIG[editor]}"
 
   readarray -t matches < <(grep --exclude-dir=.git -irl "$*" "$(zet_mode_path)")
@@ -124,12 +125,12 @@ command_edit() {
     # TODO: @feat: display title instead of path in select menu
     # TODO: @refactor: dry
     select match in "${matches[@]}"; do
-      title="$(zet_title "${match}")"
       "${editor}" "${match}"
       read -rp 'Commit? ' res
       [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
     done
   else
+    match="${matches[0]}"
     "${editor}" "${match}"
     read -rp 'Commit? ' res
     [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
