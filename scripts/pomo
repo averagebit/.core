@@ -39,18 +39,18 @@ SUBCOMMANDS:
 "
 
 initialize() {
-  : "${CONFIG[session_emoji]:=🍅}"
-  : "${CONFIG[session_duration]:=25}"
-  : "${CONFIG[session_current]:=1}"
-  : "${CONFIG[session_total]:=8}"
-  : "${CONFIG[session_long]:=25}"
-  : "${CONFIG[session_short]:=10}"
-  : "${CONFIG[session_end]:=}"
-  : "${CONFIG[session_break]:=false}"
-  : "${CONFIG[session_long_frequency]:=4}"
-  : "${CONFIG[emoji_work]:=🍅}"
   : "${CONFIG[emoji_break]:=🧘}"
   : "${CONFIG[emoji_free]:=🏖}"
+  : "${CONFIG[emoji_work]:=🍅}"
+  : "${CONFIG[session_break]:=false}"
+  : "${CONFIG[session_current]:=1}"
+  : "${CONFIG[session_duration]:=25}"
+  : "${CONFIG[session_emoji]:=🍅}"
+  : "${CONFIG[session_end]:=}"
+  : "${CONFIG[session_long]:=25}"
+  : "${CONFIG[session_long_frequency]:=4}"
+  : "${CONFIG[session_short]:=10}"
+  : "${CONFIG[session_total]:=8}"
   config_write
 }
 
@@ -83,7 +83,7 @@ config_write() {
 
   for key in "${!CONFIG[@]}"; do
     echo "${key}=${CONFIG[${key}]}"
-  done > "${config_path}"
+  done | sort > "${config_path}"
 }
 
 command_start() {
