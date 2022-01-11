@@ -39,16 +39,19 @@ export HOMEBREW_CASK_OPTS="--require-sha"
 export HOMEBREW_NO_INSECURE_REDIRECT=1
 export HOMEBREW_NO_ANALYTICS=1
 
+# Rust
+export CARGO_HOME="${HOME}/.local/share/cargo"
+export RUSTUP_HOME="${HOME}/.local/share/rust"
+
 # Go
 export GOPATH="${HOME}/.local/share/go"
-export GOBIN="${HOME}/.local/bin"
 
 # Containers
 export CONTAINER_APP=docker
 export DOCKER_CONTENT_TRUST=0
 
 # Path
-export PATH="${SCRIPTS}:${HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+export PATH="${SCRIPTS}:${HOME}/.local/share/go/bin:${HOME}/.local/share/cargo/bin:${HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export CDPATH=".:${WORKSPACES}:${REPOS}:${GHREPOS}:${GLREPOS}:${CORE}:${HOME}"
 
 # Dircolors
@@ -128,3 +131,4 @@ if [[ -z "${TMUX}" ]]; then
   [[ -z "${ID}" ]] && tmux new-session
   tmux attach-session -t "${ID}"
 fi
+
