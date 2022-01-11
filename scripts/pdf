@@ -1,0 +1,21 @@
+#!/usr/local/bin/bash
+
+if [[ -z "${PDFS}" ]]; then
+  echo "The \$PDFS environment variable is not set."
+  exit 1
+fi
+
+list() {
+  exec find "${PDFS}" -type f \( -name "*.pdf" -o -name "*.epub" \) -exec basename {} \;
+}
+
+if [[ -n "${COMP_LINE}" ]]; then
+  prefix=$(echo "${COMP_LINE}" | cut -d " " -f 2)
+  [[ "${prefix}" == "" ]] && list && exit 0
+  [[ "${prefix}" == "$(list | grep -w "${prefix}")" ]] && exit 0
+  list | grep ^"${prefix}" && exit 0
+fi
+
+pdf="${PDFS}/$1"
+
+[[ -f "${pdf}" ]] && exec open "${pdf}"
