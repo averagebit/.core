@@ -3,6 +3,8 @@
 ln -sf "${PWD}/gitignore" "${HOME}/.gitignore"
 
 git config --global core.excludesfile "${HOME}/.gitignore"
+
+[[ -n "${GIT_EDITOR}" ]] && git config --global core.editor "${GIT_EDITOR}"
 [[ -n "${GIT_USER}" ]] && git config --global user.name "${GIT_USER}"
 [[ -n "${GIT_EMAIL}" ]] && git config --global user.email "${GIT_EMAIL}"
 [[ -n "${GIT_DEFAULT_BRANCH}" ]] && git config --global init.defaultbranch "${GIT_DEFAULT_BRANCH}"

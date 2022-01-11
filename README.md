@@ -12,7 +12,8 @@ $ export USER="$(whoami)" \
     GIT_DEFAULT_BRANCH=main \
     GIT_GPG_SIGN_COMMIT=true \
     GIT_GPG_SIGN_TAG=true \
-    GIT_GPG_PROGRAM="$(which gpg)"
+    GIT_GPG_PROGRAM="$(which gpg)" \
+    GIT_EDITOR=vi
 
 $ ./setup
 ```
