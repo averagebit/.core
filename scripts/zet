@@ -4,6 +4,8 @@
 set -e
 
 : "${EXE:="${0##*/}"}"
+: "${USER:="$(whoami)"}"
+: "${GITUSER:="${USER}"}"
 : "${GHREPOS:="${HOME}/Workspaces/repos/github/${USER}"}"
 
 declare -A CONFIG
@@ -57,11 +59,57 @@ newest() {
   head -n 1 < <(/bin/ls -At "${1:-.}")
 }
 
+urlencode() {
+  local string="${1}"
+  local strlen=${#string}
+  local encoded=""
+  local pos c o
+
+  for ((pos = 0; pos < strlen; pos++)); do
+    c=${string:$pos:1}
+    case "$c" in
+      [-_.~a-zA-Z0-9]) o="${c}" ;;
+      *) printf -v o '%%%02x' "'$c'" ;;
+    esac
+    encoded+="${o}"
+  done
+  echo "${encoded}"
+  REPLY="${encoded}"
+}
+
 zet_mode_path() {
   [[ ${CONFIG[mode]} == 'public' ]] && echo "${CONFIG[public]}"
   [[ ${CONFIG[mode]} == 'private' ]] && echo "${CONFIG[private]}"
 }
 
+zet_remote() {
+  local repo remote url
+
+  cd "$(zet_mode_path)"
+  remote="$(git config --get remote.origin.url)"
+
+  case "${remote}" in
+    http*) url="${remote}" ;;
+    git*)
+      repo="${remote#*/}"
+      repo="${repo%*.git}"
+      url="https://github.com/${GITUSER}/${repo}"
+      ;;
+  esac
+
+  echo "${url}"
+}
+
+zet_url() {
+  local id path url repo remote
+  path="$1"
+  id="$(zet_id "${path}")"
+  url="$(zet_remote)/${id}"
+
+  echo "${url}"
+}
+
+# TODO: error handling everywhere
 zet_dir() {
   local dir path
   path="$1"
@@ -137,6 +185,11 @@ command_edit() {
   fi
 }
 
+command_query() {
+  query="$1"
+  echo "$(zet_remote)/search?q=$(urlencode "${query}")"
+}
+
 command_mode() {
   echo "zet: ${CONFIG[mode]}"
 }
@@ -164,6 +217,7 @@ main() {
   case "$1" in
     create) shift; command_create "$*"; exit 0 ;;
     edit) shift; command_edit "$*"; exit 0 ;;
+    query) shift; command_query "$*"; exit 0 ;;
     mode) command_mode; exit 0 ;;
     public) command_public; exit 0 ;;
     private) command_private; exit 0 ;;
