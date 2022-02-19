@@ -9,8 +9,8 @@ set -e
 declare -A CONFIG
 
 initialize() {
-  : "${CONFIG[editor]:='vi'}"
-  : "${CONFIG[mode]:='private'}"
+  : "${CONFIG[editor]:=vi}"
+  : "${CONFIG[mode]:=private}"
   : "${CONFIG[private]:="${HOME}/Private/${EXE}"}"
   : "${CONFIG[public]:="${GHREPOS}/${EXE}"}"
   config_write
@@ -142,13 +142,14 @@ command_mode() {
 }
 
 command_public() {
-  echo 'public'
-  CONFIG[mode]='public'
+  echo 'mode: public'
+  CONFIG[mode]=public
   config_write
 }
 
 command_private() {
-  CONFIG[mode]='private'
+  echo 'mode: private'
+  CONFIG[mode]=private
   config_write
 }
 
