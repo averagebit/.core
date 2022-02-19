@@ -141,7 +141,7 @@ zet_commit() {
   cd "$(zet_mode_path)"
   git add "${dir}"
   git commit -m "${title}" -e
-  git push -u origin main
+  exec git push -u origin main
 }
 
 # Commands
