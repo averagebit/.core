@@ -1,0 +1,5 @@
+#!/usr/local/bin/bash
+
+TIMEZONE="${1-US/Pacific}"
+
+printf "${TIMEZONE}\n$(TZ=":${1-${TIMEZONE}}" date)"

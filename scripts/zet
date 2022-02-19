@@ -140,8 +140,8 @@ zet_commit() {
 
   cd "$(zet_mode_path)"
   git add "${dir}"
-  git commit -m "${title}"
-  exec git push -u origin main
+  git commit -m "${title}" -e
+  git push -u origin main
 }
 
 # Commands
@@ -155,7 +155,6 @@ command_create() {
 
   mkdir -p "${dir}" && touch "${path}"
   echo "# ${title}" > "${path}"
-  echo "Created $(date +"%Y-%m-%d %H:%M:%S")" >> "${path}"
   "${editor}" "${path}"
   read -rp 'Commit? ' res
   [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
