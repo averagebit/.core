@@ -46,12 +46,37 @@ let g:loaded_netrwFileHandlers = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
-  Plug 'sheerun/vim-polyglot' " Language support
+  Plug 'sheerun/vim-polyglot' " Syntax highlighting
 	Plug 'morhetz/gruvbox'      " Gruvbox colorscheme
+	Plug 'dense-analysis/ale'   " Linting
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy search
 call plug#end()
 
+" Ale
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠️'
+let g:ale_linters_explicit = 1 " Only run specified linters
+let g:ale_fix_on_save = 1
+
+let g:ale_linters = {
+\		'css': ['prettier'],
+\		'typescript': ['eslint'],
+\		'javascript': ['eslint'],
+\   'typescriptreact': ['eslint'],
+\   'javascriptreact': ['eslint'],
+\}
+
+let g:ale_fixers = {
+\   '*': ['trim_whitespace'],
+\		'css': ['prettier'],
+\		'typescript': ['eslint'],
+\		'javascript': ['eslint'],
+\   'typescriptreact': ['eslint'],
+\   'javascriptreact': ['eslint'],
+\}
+
 " FZF
+let $FZF_DEFAULT_COMMAND = 'rg --files'
 nmap <C-p> :FZF<CR>
 
 " Gruvbox
@@ -125,7 +150,7 @@ au FocusLost,WinLeave,BufLeave * :silent! noautocmd wall
 set listchars=trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
 
 " Statusline
-set statusline=\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %Y\ 
+set statusline=\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %Y\
 
 " Allow misspellings
 cnoreabbrev W w
