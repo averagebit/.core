@@ -110,13 +110,6 @@ zet_url() {
 }
 
 # TODO: error handling everywhere
-zet_dir() {
-  local dir path
-  path="$1"
-  dir="$(dirname "${path}")"
-  echo "${dir}"
-}
-
 zet_id() {
   local id path
   path="$1"
@@ -136,10 +129,10 @@ zet_commit() {
   local title dir path
   path="$1"
   title="$(zet_title "${path}")"
-  dir="$(zet_dir "${path}")"
 
   cd "$(zet_mode_path)"
-  git add "${dir}"
+  git pull -q
+  git add -A "${path}"
   git commit -m "${title}" -e
   exec git push -u origin main
 }
@@ -161,27 +154,26 @@ command_create() {
 }
 
 command_edit() {
-  local match matches editor
+  local match matches editor path
   editor="${CONFIG[editor]}"
 
-  readarray -t matches < <(grep --exclude-dir=.git -irl "$*" "$(zet_mode_path)")
+  readarray -t matches < <(grep --exclude-dir=.git -ir "^# $*" "$(zet_mode_path)")
 
-  if [[ ${#matches[@]} -eq 0 ]]; then
-    exit 0
-  elif [[ ${#matches[@]} -gt 1 ]]; then
-    # TODO: @feat: display title instead of path in select menu
-    # TODO: @refactor: dry
-    select match in "${matches[@]}"; do
-      "${editor}" "${match}"
+  [[ ${#matches[@]} -eq 0 ]] && exit 0
+
+  if [[ ${#matches[@]} -gt 1 ]]; then
+    select match in "${matches[@]##*:# }"; do
+      path=$(grep --exclude-dir=.git -irl "^# ${match}$" "$(zet_mode_path)")
+      "${editor}" "${path}"
       read -rp 'Commit? ' res
-      [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
+      [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
     done
-  else
-    match="${matches[0]}"
-    "${editor}" "${match}"
-    read -rp 'Commit? ' res
-    [[ "${res}" =~ ^[Yy] ]] && zet_commit "${match}"
   fi
+
+  path="${matches[0]%%:*}"
+  "${editor}" "${path}"
+  read -rp 'Commit? ' res
+  [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
 }
 
 command_query() {
