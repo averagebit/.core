@@ -103,7 +103,7 @@ alias temp="cd $(mktemp -d)"
 
 # Functions
 reload() {
-  source "${HOME}/.bashrc" 
+  source "${HOME}/.bashrc"
 
   if [[ $(command -v tmux) ]]; then
     tmux source-file "${HOME}/.tmux.conf"
@@ -123,7 +123,7 @@ if [[ $(command -v brew) ]]; then
 else
   if [[ -r "/etc/profile.d/bash_completion.sh" ]]; then
     source "/etc/profile.d/bash_completion.sh"
-  fi 
+  fi
 fi
 
 # Run Tmux and attach to existing session on shell load
@@ -133,3 +133,5 @@ if [[ -z "${TMUX}" ]]; then
   tmux attach-session -t "${ID}"
 fi
 
+# Import private configurations
+source "${HOME}/.bashrc_private"
