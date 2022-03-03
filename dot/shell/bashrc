@@ -100,6 +100,8 @@ alias c='clear'
 alias l='/bin/ls -G --color'
 alias ls='/bin/ls -lahG --color'
 alias temp="cd $(mktemp -d)"
+alias ta='tmux attach'
+alias td='tmux detach'
 
 # Functions
 reload() {
@@ -133,5 +135,5 @@ if [[ -z "${TMUX}" ]]; then
   tmux attach-session -t "${ID}"
 fi
 
-# Import private configurations
-source "${HOME}/.bashrc_private"
+# Source private bashrc
+[[ -f "${HOME}/.bashrc_private" ]] && source "${HOME}/.bashrc_private"
