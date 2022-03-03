@@ -1,0 +1,4 @@
+#!/usr/local/bin/bash
+
+open "https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=$(urlencode "$*")"
+
