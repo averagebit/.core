@@ -56,7 +56,7 @@ isostamp() {
 }
 
 newest() {
-  head -n 1 < <(/bin/ls -At "${1:-.}")
+  echo "$(head -n 1 < <(ls -At "${1:-.}"))"
 }
 
 urlencode() {
@@ -129,12 +129,19 @@ zet_commit() {
   local title dir path
   path="$1"
   title="$(zet_title "${path}")"
+  dir="${path%%/README.md}"
 
   cd "$(zet_mode_path)"
-  git pull -q
-  git add -A "${path}"
-  git commit -m "${title}" -e
-  exec git push -u origin main
+  if [[ $(git status --porcelain) ]]; then
+    read -rp 'Commit? ' res
+    if [[ "${res}" =~ ^[Yy] ]]; then
+      git pull -q
+      git add -A "${dir}"
+      git commit -m "${title}"
+      exec git push -u origin main
+    fi
+  fi
+  exit 0
 }
 
 # Commands
@@ -149,8 +156,7 @@ command_create() {
   mkdir -p "${dir}" && touch "${path}"
   echo "# ${title}" > "${path}"
   "${editor}" "${path}"
-  read -rp 'Commit? ' res
-  [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
+  zet_commit "${path}"
 }
 
 command_edit() {
@@ -159,21 +165,23 @@ command_edit() {
 
   readarray -t matches < <(grep --exclude-dir=.git -ir "^# $*" "$(zet_mode_path)")
 
-  [[ ${#matches[@]} -eq 0 ]] && exit 0
-
-  if [[ ${#matches[@]} -gt 1 ]]; then
-    select match in "${matches[@]##*:# }"; do
-      path=$(grep --exclude-dir=.git -irl "^# ${match}$" "$(zet_mode_path)")
-      "${editor}" "${path}"
-      read -rp 'Commit? ' res
-      [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
-    done
+  if [[ "$*" == "last" ]]; then
+    path="$(newest "$(zet_mode_path)"/*/README.md)"
+    "${editor}" "${path}"
+    zet_commit "${path}"
   fi
 
-  path="${matches[0]%%:*}"
-  "${editor}" "${path}"
-  read -rp 'Commit? ' res
-  [[ "${res}" =~ ^[Yy] ]] && zet_commit "${path}"
+  if [[ ${#matches[@]} -eq 1 ]]; then
+    path="${matches[0]%%:*}"
+    "${editor}" "${path}"
+    zet_commit "${path}"
+  fi
+
+  select match in "${matches[@]##*:# }"; do
+    path=$(grep --exclude-dir=.git -irl "^# ${match}$" "$(zet_mode_path)")
+    "${editor}" "${path}"
+    zet_commit "${path}"
+  done
 }
 
 command_query() {

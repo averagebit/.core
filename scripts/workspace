@@ -1,0 +1,5 @@
+#!/usr/local/bin/bash
+
+USER=$(whoami)
+
+docker run -it --rm --name workspace -v "${WORKSPACE}/volumes/workspace":"/home/${USER}/volume" averagebit/workspace

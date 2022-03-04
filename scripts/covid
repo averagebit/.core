@@ -1,3 +1,4 @@
 #!/usr/local/bin/bash
 
 curl https://corona-stats.online/"$1"
+
