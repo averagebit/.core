@@ -1,0 +1,19 @@
+#!/bin/bash
+
+os=linux
+arch=amd64
+file="$(
+  curl -sSL "https://golang.org/dl/?mode=json" \
+    | grep -o '[^"]*'${os}'-'${arch}'.tar.gz' \
+    | head -n 1
+)"
+
+# Create required dirs and remove old go version if applicable
+mkdir -p "${HOME}/.local/share"
+rm -rf "${HOME}/.local/share/go"
+
+# Download the tar, extract it and delete it
+curl -L "https://go.dev/dl/${file}" > "${HOME}/.local/share/${file}"
+tar -C "${HOME}/.local/share" -xzf "${HOME}/.local/share/${file}"
+rm -rf "${HOME}/.local/share/${file}"
+
