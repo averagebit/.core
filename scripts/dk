@@ -1,7 +1,6 @@
 #!/usr/local/bin/bash
 
 case "$1" in
-  "") exec docker "$@" ;;
   b) shift; exec docker build "$@" ;;
   c) shift; exec docker compose "$@" ;;
   i) shift; exec docker image "$@" ;;
@@ -11,4 +10,5 @@ case "$1" in
   v) shift; exec docker volume "$@" ;;
   clean) exec docker rm "$(docker ps -aq)" ;;
   prune) exec docker system prune -af ;;
+  *) exec docker "$@" ;;
 esac
