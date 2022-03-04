@@ -3,9 +3,16 @@
 unset CDPATH
 
 if [[ "${USER}" ]]; then
-  mkdir -p "${HOME}/Workspaces/vms" \
-    "${HOME}/Workspaces/repos/github/${USER}" \
-    "${HOME}/Workspaces/repos/gitlab/${USER}"
+  mkdir -p "${HOME}/Workspace/vms" \
+    "${HOME}/Workspace/volumes" \
+    "${HOME}/Workspace/repos/github/${USER}" \
+    "${HOME}/Workspace/repos/gitlab/${USER}" \
+    "${HOME}/Documents" \
+    "${HOME}/Music" \
+    "${HOME}/Pictures" \
+    "${HOME}/Private" \
+    "${HOME}/Public" \
+    "${HOME}/Videos"
 fi
 
 for entry in "${PWD}"/dot/*; do
