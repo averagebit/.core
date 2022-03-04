@@ -77,10 +77,10 @@ __prompt() {
   directory="${b}${PWD##*/}${d}"
   git_branch="$(git branch --show-current 2>/dev/null)"
 
-  [[ -f /.dockerenv ]] && directory_prefix="${r}${username}@${hostname}${w}:${d}"
-  [[ -n "${SSH_TTY}" ]] && directory_prefix="${r}${username}@${hostname}${w}:${d}"
+  [[ -f /.dockerenv ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
+  [[ -n "${SSH_TTY}" ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
   [[ "${status}" != 0 ]] && status_color="${r}"
-  [[ "${EUID}" == 0 ]] && character='#'
+  [[ "${EUID}" == 0 ]] && character='#' && directory_prefix="${r}${username}@${hostname}${w}:${d}"
   [[ "${PWD}" == / ]] && directory="${b}/${d}"
   [[ "${PWD}" == "$HOME" ]] && directory="${b}~${d}"
   [[ "${PWD}" != $HOME* ]] && directory_suffix="🔒"
