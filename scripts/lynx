@@ -1,6 +1,13 @@
 #!/usr/local/bin/bash
 
+useragent="--useragent=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1 Lynx\""
+cfg="--cfg=${HOME}/.config/lynx/lynx.cfg"
+lss="--lss=${HOME}/.config/lynx/lynx.lss"
+
 [[ -z "${CONTAINER_APP}" ]] && CONTAINER_APP=docker
+
+[[ -x /usr/local/bin/lynx ]] && exec /usr/local/bin/lynx "${useragent}" "${cfg}" "${lss}" "${*:--h}"
+[[ -x /usr/bin/lynx ]] && exec /usr/bin/lynx "${useragent}" "${cfg}" "${lss}" "${*:--h}"
 
 exec "${CONTAINER_APP}" run --rm -it \
     --name lynx \
