@@ -2,4 +2,9 @@
 
 USER=$(whoami)
 
-docker run -it --rm --name workspace -v "${WORKSPACE}/volumes/workspace":"/home/${USER}/volume" averagebit/workspace
+docker run -it --rm \
+  --name workspace \
+  --hostname workspace \
+  -v "${WORKSPACE}/volumes/workspace":"/home/${USER}/volume" \
+  averagebit/workspace
+
