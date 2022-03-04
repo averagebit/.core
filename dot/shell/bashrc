@@ -67,8 +67,8 @@ fi
 
 # Prompt
 __prompt() {
-  local username='\u' hostname='\h' character='❯' status="$?" \
-        status_color directory directory_suffix git_branch format \
+  local username='\u' hostname='\h' character='❯' status="$?" status_color \
+        git_branch format directory_prefix directory directory_suffix \
         o='\[\e[1;30m\]' r='\[\e[1;31m\]' g='\[\e[1;32m\]' \
         y='\[\e[1;33m\]' b='\[\e[1;34m\]' m='\[\e[1;35m\]' \
         c='\[\e[1;36m\]' w='\[\e[1;37m\]' d='\[\e[0m\]'
@@ -77,14 +77,16 @@ __prompt() {
   directory="${b}${PWD##*/}${d}"
   git_branch="$(git branch --show-current 2>/dev/null)"
 
-  [[ $status != 0 ]] && status_color="${r}"
-  [[ $EUID == 0 ]] && character='#'
-  [[ $PWD == / ]] && directory="${b}/${d}"
-  [[ $PWD == "$HOME" ]] && directory="${b}~${d}"
-  [[ $PWD != $HOME* ]] && directory_suffix="🔒"
-  [[ -n $git_branch ]] && git_branch=" on${m}  ${git_branch}${d}"
+  [[ -f /.dockerenv ]] && directory_prefix="${r}${username}@${hostname}${w}:${d}"
+  [[ -n "${SSH_TTY}" ]] && directory_prefix="${r}${username}@${hostname}${w}:${d}"
+  [[ "${status}" != 0 ]] && status_color="${r}"
+  [[ "${EUID}" == 0 ]] && character='#'
+  [[ "${PWD}" == / ]] && directory="${b}/${d}"
+  [[ "${PWD}" == "$HOME" ]] && directory="${b}~${d}"
+  [[ "${PWD}" != $HOME* ]] && directory_suffix="🔒"
+  [[ -n "${git_branch}" ]] && git_branch=" on${m}  ${git_branch}${d}"
 
-  format="\n${directory}${directory_suffix}${git_branch} \n${status_color}${character} ${d}"
+  format="\n${directory_prefix}${directory}${directory_suffix}${git_branch} \n${status_color}${character} ${d}"
   PS1="${format}"
 }
 
@@ -129,7 +131,7 @@ else
 fi
 
 # Run Tmux and attach to existing session on shell load
-if [[ -z "${TMUX}" ]]; then
+if [[ $(command -v tmux) && -z "${TMUX}" ]]; then
   ID="$( tmux ls | grep -vm1 attached | cut -d: -f1 )"
   [[ -z "${ID}" ]] && tmux new-session
   tmux attach-session -t "${ID}"
