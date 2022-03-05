@@ -130,12 +130,6 @@ else
   fi
 fi
 
-# Run Tmux and attach to existing session on shell load
-if [[ $(command -v tmux) && -z "${TMUX}" ]]; then
-  ID="$( tmux ls | grep -vm1 attached | cut -d: -f1 )"
-  [[ -z "${ID}" ]] && tmux new-session
-  tmux attach-session -t "${ID}"
-fi
-
 # Source private bashrc
 [[ -f "${HOME}/.bashrc_private" ]] && source "${HOME}/.bashrc_private"
+
