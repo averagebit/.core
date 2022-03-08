@@ -1,4 +1,4 @@
 #!/usr/local/bin/bash
 
-[[ $(command -v vim) ]] && exec vim "$@"
+[[ $(command -v "${EDITOR}") ]] && exec "${EDITOR}" "$@"
 exec vi "$@"

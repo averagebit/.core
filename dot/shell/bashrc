@@ -26,7 +26,7 @@ export PDFS="${GHREPOS}/pdfs"
 export TERM=xterm-256color
 export HRULEWIDTH=73
 export EDITOR_PREFIX=vi
-export EDITOR=vi
+export EDITOR=vim
 export VISUAL=vi
 export CLICOLOR=1
 export LSCOLORS="ExfxcxdxbxDxCxabagacad"
@@ -77,9 +77,8 @@ __prompt() {
   directory="${b}${PWD##*/}${d}"
   git_branch="$(git branch --show-current 2>/dev/null)"
 
-  [[ -f /.dockerenv ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
-  [[ -n "${SSH_TTY}" ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
   [[ "${status}" != 0 ]] && status_color="${r}"
+  [[ -f "/.dockerenv" || -n "${SSH_TTY}" ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
   [[ "${EUID}" == 0 ]] && character='#' && directory_prefix="${r}${username}@${hostname}${w}:${d}"
   [[ "${PWD}" == / ]] && directory="${b}/${d}"
   [[ "${PWD}" == "$HOME" ]] && directory="${b}~${d}"
