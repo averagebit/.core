@@ -56,7 +56,7 @@ isostamp() {
 }
 
 newest() {
-  echo "$(head -n 1 < <(ls -At "${1:-.}"))"
+  echo "$(head -n 1 < <(ls -It "${1:-.}"))/README.md"
 }
 
 urlencode() {
@@ -166,7 +166,7 @@ command_edit() {
   readarray -t matches < <(grep --exclude-dir=.git -ir "^# $*" "$(zet_mode_path)")
 
   if [[ "$*" == "last" ]]; then
-    path="$(newest "$(zet_mode_path)"/*/README.md)"
+    path="$(zet_mode_path)/$(newest "$(zet_mode_path)")"
     "${editor}" "${path}"
     zet_commit "${path}"
   fi
