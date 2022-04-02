@@ -1,4 +1,8 @@
 #!/bin/bash
 
+mkdir -p "${HOME}/.config/nvim"
+
 ln -sf "${PWD}/vimrc" "${HOME}/.vimrc"
+ln -sf "${PWD}/vimrc" "${HOME}/.config/nvim/init.vim"
+
 
