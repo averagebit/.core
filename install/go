@@ -8,12 +8,12 @@ file="$(
     | head -n 1
 )"
 
-# Create required dirs and remove old go version if applicable
 mkdir -p "${HOME}/.local/share"
 rm -rf "${HOME}/.local/share/go"
 
-# Download the tar, extract it and delete it
 curl -L "https://go.dev/dl/${file}" > "${HOME}/.local/share/${file}"
 tar -C "${HOME}/.local/share" -xzf "${HOME}/.local/share/${file}"
+ln -sf "${HOME}/.local/share/go/bin/go" "${HOME}/.local/bin/go"
+ln -sf "${HOME}/.local/share/go/bin/gofmt" "${HOME}/.local/bin/gofmt"
 rm -rf "${HOME}/.local/share/${file}"
 
