@@ -173,12 +173,6 @@ vnoremap <Leader>j :m'>+<CR>gv=gv
 " Clear highlight with return
 nnoremap <silent> <CR> :let @/ = ""<CR><CR>
 
-" Show syntax highlight groups for character under cursor
-nmap <Leader>tt <cmd>echo
-	\ 'hi<' . synIDattr(synID(line('.'), col('.'), 1), 'name')
-	\ . '> trans<' . synIDattr(synID(line('.'), col('.'), 0), 'name') . '> lo<'
-	\ . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name') . '>'<CR>
-
 " Toggle editor's visual effects
 nmap <Leader>ts <cmd>setlocal spell!<CR>
 nmap <Leader>tn <cmd>setlocal nonumber!<CR>
@@ -189,6 +183,12 @@ nmap <Leader>th <cmd>nohlsearch<CR>
 nmap <Leader>tw <cmd>execute('setlocal wrap! breakindent! colorcolumn=' .
 	\ (&colorcolumn == '' ? &textwidth : ''))<CR>
 
+" Show syntax highlight groups for character under cursor
+nmap <Leader>tg <cmd>echo
+	\ 'hi<' . synIDattr(synID(line('.'), col('.'), 1), 'name')
+	\ . '> trans<' . synIDattr(synID(line('.'), col('.'), 0), 'name') . '> lo<'
+	\ . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name') . '>'<CR>
+
 " }}}
 
 " Plugin Settings {{{
@@ -197,9 +197,13 @@ nmap <Leader>tw <cmd>execute('setlocal wrap! breakindent! colorcolumn=' .
 let g:rustfmt_autosave = 1
 let g:rust_clip_command = 1
 
-" Golang
-au FileType go nmap <leader>t  <Plug>(go-test)
+au FileType rust nmap <leader>c :Ccheck<CR>
+au FileType rust nmap <leader>b :Cbuild<CR>
+au FileType rust nmap <leader>r :RustRun<CR>
+au FileType rust nmap <leader>t :RustTest<CR>
+au FileType rust nmap <leader>tt :RustTest!<CR>
 
+" Golang
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_extra_types = 1
@@ -219,6 +223,11 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_diagnostic_errors = 1
 let g:go_highlight_diagnostic_warnings = 1
+
+au FileType go nmap <leader>b <Plug>(go-build)
+au FileType go nmap <leader>r <Plug>(go-run-split)
+au FileType go nmap <leader>t <Plug>(go-test-func)
+au FileType go nmap <leader>tt <Plug>(go-test)
 
 " FZF
 let $FZF_DEFAULT_COMMAND = 'rg --files'
