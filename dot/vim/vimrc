@@ -56,9 +56,9 @@ let g:loaded_rrhelper = 1
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
   Plug 'averagebit/onedark.vim'
-	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-	Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
+  Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
   Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json'] }
 call plug#end()
 
