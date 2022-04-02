@@ -24,9 +24,9 @@ if has('vim_starting')
 
 	" Enable syntax and 24-bit color support
 	syntax on
-	if (has("termguicolors"))
-		set termguicolors
-	endif
+	" if (has("termguicolors"))
+	" 	set termguicolors
+	" endif
 endif
 
 " Disable vim distribution plugins
@@ -47,41 +47,38 @@ let g:loaded_2html_plugin = 1
 let g:loaded_logiPat = 1
 let g:loaded_rrhelper = 1
 
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
+" let g:loaded_netrw = 1
+" let g:loaded_netrwPlugin = 1
+" let g:loaded_netrwSettings = 1
+" let g:loaded_netrwFileHandlers = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
-  Plug 'sheerun/vim-polyglot' " Syntax highlighting
-	Plug 'morhetz/gruvbox'      " Gruvbox colorscheme
-	Plug 'dense-analysis/ale'   " Linting
+	" Plug 'morhetz/gruvbox'          " Gruvbox colorscheme
+  Plug 'rust-lang/rust.vim'       " Rust
+  Plug 'averagebit/vim-go-syntax' " Go syntax highlighting
+	Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }  " Go
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy search
 call plug#end()
 
-" Ale
-let g:ale_sign_error = '❌'
-let g:ale_sign_warning = '⚠️'
-let g:ale_linters_explicit = 1 " Only run specified linters
-let g:ale_fix_on_save = 1
+" Rust
+let g:rustfmt_autosave = 1
+let g:rust_clip_command = 1
 
-let g:ale_linters = {
-\		'css': ['prettier'],
-\		'typescript': ['eslint'],
-\		'javascript': ['eslint'],
-\   'typescriptreact': ['eslint'],
-\   'javascriptreact': ['eslint'],
-\}
+" Golang
+au FileType go nmap <leader>t  <Plug>(go-test)
 
-let g:ale_fixers = {
-\   '*': ['trim_whitespace'],
-\		'css': ['prettier'],
-\		'typescript': ['eslint'],
-\		'javascript': ['eslint'],
-\   'typescriptreact': ['eslint'],
-\   'javascriptreact': ['eslint'],
-\}
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_diagnostic_errors = 1
+let g:go_highlight_diagnostic_warnings = 1
 
 " FZF
 let $FZF_DEFAULT_COMMAND = 'rg --files'
