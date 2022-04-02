@@ -6,15 +6,17 @@ set -e
 : "${EXE:="${0##*/}"}"
 : "${USER:="$(whoami)"}"
 : "${GITUSER:="${USER}"}"
-: "${GHREPOS:="${HOME}/Workspaces/repos/github/${USER}"}"
+: "${GHREPOS:="${HOME}/Workspace/repos/github/${USER}"}"
 
 declare -A CONFIG
 
 initialize() {
   : "${CONFIG[editor]:=vi}"
   : "${CONFIG[mode]:=private}"
-  : "${CONFIG[private]:="${HOME}/Private/${EXE}"}"
-  : "${CONFIG[public]:="${GHREPOS}/${EXE}"}"
+  : "${CONFIG[root_private]:="${HOME}/Private/${EXE}"}"
+  : "${CONFIG[root_public]:="${GHREPOS}/${EXE}"}"
+  : "${CONFIG[private]:="${HOME}/Private/${EXE}/src/zet"}"
+  : "${CONFIG[public]:="${GHREPOS}/${EXE}/src/zet"}"
   config_write
 }
 
@@ -55,6 +57,10 @@ isostamp() {
   date +%Y%m%d%H%M%S
 }
 
+timestamp() {
+  printf "%(%A, %B %-e, %Y, %-l:%M:%S%p %Z%0z)T"
+}
+
 newest() {
   echo "$(head -n 1 < <(ls -It "${1:-.}"))/README.md"
 }
@@ -77,7 +83,12 @@ urlencode() {
   REPLY="${encoded}"
 }
 
-zet_mode_path() {
+zet_root_path() {
+  [[ ${CONFIG[mode]} == 'public' ]] && echo "${CONFIG[root_public]}"
+  [[ ${CONFIG[mode]} == 'private' ]] && echo "${CONFIG[root_private]}"
+}
+
+zet_path() {
   [[ ${CONFIG[mode]} == 'public' ]] && echo "${CONFIG[public]}"
   [[ ${CONFIG[mode]} == 'private' ]] && echo "${CONFIG[private]}"
 }
@@ -85,7 +96,7 @@ zet_mode_path() {
 zet_remote() {
   local repo remote url
 
-  cd "$(zet_mode_path)"
+  cd "$(zet_path)"
   remote="$(git config --get remote.origin.url)"
 
   case "${remote}" in
@@ -126,13 +137,15 @@ zet_title() {
 }
 
 zet_commit() {
-  local title dir path
+  local title dir path timestamp
   path="$1"
   title="$(zet_title "${path}")"
   dir="${path%%/README.md}"
+  timestamp="$(timestamp)"
 
-  cd "$(zet_mode_path)"
+  cd "$(zet_path)"
   if [[ $(git status --porcelain) ]]; then
+    sed -i "" "s/Last updated on .*/Last updated on ${timestamp}/" "${path}"
     read -rp 'Commit? ' res
     if [[ "${res}" =~ ^[Yy] ]]; then
       git pull -q
@@ -148,13 +161,16 @@ zet_commit() {
 command_create() {
   local id dir path editor title
   id="$(isostamp)"
-  dir="$(zet_mode_path)/${id}"
+  dir="$(zet_path)/${id}"
   path="${dir}/README.md"
   editor="${CONFIG[editor]}"
   title="$1"
 
   mkdir -p "${dir}" && touch "${path}"
   echo "# ${title}" > "${path}"
+  printf "\n#### Timestamps\n" >> "${path}"
+  printf "\nCreated on %(%A, %B %-e, %Y, %-l:%M:%S%p %Z%0z)T\n" >> "${path}"
+  printf "\nLast updated on %(%A, %B %-e, %Y, %-l:%M:%S%p %Z%0z)T\n" >> "${path}"
   "${editor}" "${path}"
   zet_commit "${path}"
 }
@@ -163,10 +179,10 @@ command_edit() {
   local match matches editor path
   editor="${CONFIG[editor]}"
 
-  readarray -t matches < <(grep --exclude-dir=.git -ir "^# $*" "$(zet_mode_path)")
+  readarray -t matches < <(grep --exclude-dir=.git -ir "^# $*" "$(zet_path)" | sort -r)
 
   if [[ "$*" == "last" ]]; then
-    path="$(zet_mode_path)/$(newest "$(zet_mode_path)")"
+    path="$(zet_path)/$(newest "$(zet_path)")"
     "${editor}" "${path}"
     zet_commit "${path}"
   fi
@@ -178,7 +194,7 @@ command_edit() {
   fi
 
   select match in "${matches[@]##*:# }"; do
-    path=$(grep --exclude-dir=.git -irl "^# ${match}$" "$(zet_mode_path)")
+    path=$(grep --exclude-dir=.git -irl "^# ${match}$" "$(zet_path)")
     "${editor}" "${path}"
     zet_commit "${path}"
   done
@@ -187,6 +203,17 @@ command_edit() {
 command_query() {
   query="$1"
   echo "$(zet_remote)/search?q=$(urlencode "${query}")"
+}
+
+command_open() {
+  if [[ ! $(command -v mdbook) ]]; then
+    echo "'mdbook' is not installed."
+    exit 0
+  fi
+
+  cd "$(zet_root_path)"
+  mdbook build
+  mdbook serve -p 10000 --open
 }
 
 command_mode() {
@@ -217,6 +244,7 @@ main() {
     create) shift; command_create "$*"; exit 0 ;;
     edit) shift; command_edit "$*"; exit 0 ;;
     query) shift; command_query "$*"; exit 0 ;;
+    open) command_open; exit 0 ;;
     mode) command_mode; exit 0 ;;
     public) command_public; exit 0 ;;
     private) command_private; exit 0 ;;
