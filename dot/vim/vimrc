@@ -4,27 +4,27 @@ if has('vim_starting')
   " Set data/cache directory as $XDG_CACHE_HOME/vim
   let $DATA_PATH = expand(($XDG_CACHE_HOME ? $XDG_CACHE_HOME : '~/.cache') . '/vim', 1)
 
-	" Install vim-plug and plugins if not installed
-	if empty(glob('~/.vim/autoload/plug.vim'))
-		silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-	endif
+  " Install vim-plug and plugins if not installed
+  if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
 
-	if has('nvim')
-		if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-			silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-			autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-		endif
-		set guicursor=
-	endif
+  if has('nvim')
+    if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+      silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+    set guicursor=
+  endif
 
-	" Disable arrows and map leaders
-	let g:elite_mode=1
-	let g:mapleader="\<Space>"
-	let g:maplocalleader=';'
+  " Disable arrows and map leaders
+  let g:elite_mode=1
+  let g:mapleader="\<Space>"
+  let g:maplocalleader=';'
 
-	" Enable syntax and 24-bit color support
-	syntax on
+  " Enable syntax and 24-bit color support
+  syntax on
   if (has("termguicolors"))
     set termguicolors
   endif
@@ -147,10 +147,10 @@ cnoreabbrev bD bd
 
 " Resize splits with arrow keys.
 if get(g:, 'elite_mode')
-	nnoremap <silent><Up>    :resize +1<CR>
-	nnoremap <silent><Down>  :resize -1<CR>
-	nnoremap <silent><Left>  :vertical resize +1<CR>
-	nnoremap <silent><Right> :vertical resize -1<CR>
+  nnoremap <silent><Up>    :resize +1<CR>
+  nnoremap <silent><Down>  :resize -1<CR>
+  nnoremap <silent><Left>  :vertical resize +1<CR>
+  nnoremap <silent><Right> :vertical resize -1<CR>
 endif
 
 " Source .vimrc
