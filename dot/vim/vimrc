@@ -55,10 +55,11 @@ let g:loaded_rrhelper = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
-  Plug 'rust-lang/rust.vim' " Rust
-  Plug 'averagebit/onedark.vim' " Syntax highlighting and colorscheme
-	Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' } " Go
-	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy search
+  Plug 'averagebit/onedark.vim'
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+	Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
+  Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json'] }
 call plug#end()
 
 " }}}
@@ -101,7 +102,7 @@ set backspace=indent,eol,start " Intuitive backspacing in insert mode
 set scrolloff=2                " Keep at least 2 lines above/below
 set sidescrolloff=5            " Keep at least 5 lines left/right
 set nu rnu                     " Hybrid line numbers
-set cmdheight=1                " Command line height
+set cmdheight=2                " Command line height
 set laststatus=0               " Don't display the status line
 set showmode                   " Show mode in cmd window
 set completeopt=menu,menuone   " Always show menu, even for one item
@@ -112,7 +113,7 @@ set helpheight=12              " Minimum help window height
 set previewheight=12           " Completion preview height
 set noequalalways              " Don't resize windows on split or close
 set colorcolumn=72             " Colur column width/visilbility
-set signcolumn=no              " Sign column visibility
+set signcolumn=number          " Sign column visibility (merge with number column)
 set cmdwinheight=5             " Command-line lines
 set formatoptions+=1           " Don't break lines after a one-letter word
 set formatoptions-=o           " Disable comment-continuation (normal 'o'/'O')
