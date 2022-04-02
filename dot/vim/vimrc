@@ -1,4 +1,5 @@
-" Initialize settings
+" Initialize {{{
+
 if has('vim_starting')
   " Set data/cache directory as $XDG_CACHE_HOME/vim
   let $DATA_PATH = expand(($XDG_CACHE_HOME ? $XDG_CACHE_HOME : '~/.cache') . '/vim', 1)
@@ -24,9 +25,9 @@ if has('vim_starting')
 
 	" Enable syntax and 24-bit color support
 	syntax on
-	" if (has("termguicolors"))
-	" 	set termguicolors
-	" endif
+  if (has("termguicolors"))
+    set termguicolors
+  endif
 endif
 
 " Disable vim distribution plugins
@@ -54,47 +55,20 @@ let g:loaded_rrhelper = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
-	" Plug 'morhetz/gruvbox'          " Gruvbox colorscheme
-  Plug 'rust-lang/rust.vim'       " Rust
-  Plug 'averagebit/vim-go-syntax' " Go syntax highlighting
-	Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }  " Go
+  Plug 'rust-lang/rust.vim' " Rust
+  Plug 'averagebit/onedark.vim' " Syntax highlighting and colorscheme
+	Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' } " Go
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy search
 call plug#end()
 
-" Rust
-let g:rustfmt_autosave = 1
-let g:rust_clip_command = 1
+" }}}
 
-" Golang
-au FileType go nmap <leader>t  <Plug>(go-test)
+" Settings {{{
 
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_variable_declarations = 1
-let g:go_highlight_variable_assignments = 1
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_diagnostic_errors = 1
-let g:go_highlight_diagnostic_warnings = 1
-
-" FZF
-let $FZF_DEFAULT_COMMAND = 'rg --files'
-nmap <C-p> :FZF<CR>
-
-" Gruvbox
-let g:gruvbox_bold='0'
-let g:gruvbox_contrast_dark='hard'
-let g:gruvbox_contrast_light='hard'
-let g:gruvbox_termcolors='256'
-
-" Settings
-colorscheme gruvbox            " Colorscheme
+set nocompatible               " Vi compatibility setting
+colorscheme onedark            " Colorscheme
 set background=dark            " Colorscheme background
 set mouse=nv                   " Disable mouse in command-line mode
-set nocompatible               " Vi compatibility setting
 set synmaxcol=2500             " Don't syntax highlight long lines
 set history=2000               " Size of history to retain
 set clipboard=unnamed          " Use unnamed clipboard
@@ -128,7 +102,7 @@ set scrolloff=2                " Keep at least 2 lines above/below
 set sidescrolloff=5            " Keep at least 5 lines left/right
 set nu rnu                     " Hybrid line numbers
 set cmdheight=1                " Command line height
-set laststatus=0               " Display the status line
+set laststatus=0               " Don't display the status line
 set showmode                   " Show mode in cmd window
 set completeopt=menu,menuone   " Always show menu, even for one item
 set completeopt+=noselect      " Do not select a match in the menu
@@ -166,6 +140,10 @@ cnoreabbrev Qa qa
 cnoreabbrev Bd bd
 cnoreabbrev bD bd
 
+" }}}
+
+" Keymap {{{
+
 " Resize splits with arrow keys.
 if get(g:, 'elite_mode')
 	nnoremap <silent><Up>    :resize +1<CR>
@@ -176,16 +154,6 @@ endif
 
 " Source .vimrc
 nnoremap <Leader>rr :source ~/.vimrc<CR>
-
-" Navigation
-vnoremap gh ^
-vnoremap gl $
-vnoremap gj G
-vnoremap gk gg
-nnoremap gh ^
-nnoremap gl $
-nnoremap gj G
-nnoremap gk gg
 
 " Re-select blocks after indenting in visual/select mode
 xnoremap < <gv
@@ -202,15 +170,67 @@ vnoremap <Leader>k :m'<-2<CR>gv=gv
 vnoremap <Leader>j :m'>+<CR>gv=gv
 
 " Clear highlight with return
-nnoremap <CR> :let @/ = ""<CR><CR>
+nnoremap <silent> <CR> :let @/ = ""<CR><CR>
 
-" Color overrides
-hi TabLine ctermbg=233 ctermfg=white cterm=NONE
-hi TabLineSel ctermbg=233 ctermfg=green cterm=NONE
-hi TabLineFill ctermbg=233 ctermfg=white
-hi StatusLine ctermfg=233
-hi StatusLineNC ctermfg=233
-hi VertSplit ctermbg=233 ctermfg=233
-hi ColorColumn ctermbg=235
-hi Visual ctermfg=darkgray ctermbg=black
+" Show syntax highlight groups for character under cursor
+nmap <Leader>tt <cmd>echo
+	\ 'hi<' . synIDattr(synID(line('.'), col('.'), 1), 'name')
+	\ . '> trans<' . synIDattr(synID(line('.'), col('.'), 0), 'name') . '> lo<'
+	\ . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name') . '>'<CR>
 
+" Toggle editor's visual effects
+nmap <Leader>ts <cmd>setlocal spell!<CR>
+nmap <Leader>tn <cmd>setlocal nonumber!<CR>
+nmap <Leader>tl <cmd>setlocal nolist!<CR>
+nmap <Leader>th <cmd>nohlsearch<CR>
+
+" Smart wrap toggle (breakindent and colorcolumn toggle as-well)
+nmap <Leader>tw <cmd>execute('setlocal wrap! breakindent! colorcolumn=' .
+	\ (&colorcolumn == '' ? &textwidth : ''))<CR>
+
+" }}}
+
+" Plugin Settings {{{
+
+" Rust
+let g:rustfmt_autosave = 1
+let g:rust_clip_command = 1
+
+" Golang
+au FileType go nmap <leader>t  <Plug>(go-test)
+
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_space_tab_error = 1
+let g:go_highlight_trailing_whitespace_error = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_highlight_diagnostic_errors = 1
+let g:go_highlight_diagnostic_warnings = 1
+
+" FZF
+let $FZF_DEFAULT_COMMAND = 'rg --files'
+nmap <C-p> :FZF<CR>
+
+" netrw
+" let g:netrw_altv = 1
+let g:netrw_banner = 0
+let g:netrw_winsize = 18
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_sort_sequence = '[\/]$,*'
+
+map <silent> <LocalLeader>e :Lexplore<CR>
+
+" }}}
