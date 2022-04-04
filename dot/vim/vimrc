@@ -55,19 +55,23 @@ let g:loaded_rrhelper = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
-  Plug 'averagebit/onedark.vim'
+  Plug 'gruvbox-community/gruvbox'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
   Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
   Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json'] }
 call plug#end()
 
+" Gruvbox
+let g:gruvbox_bold='0'
+let g:gruvbox_contrast_dark='medium'
+let g:gruvbox_contrast_light='hard'
+
 " }}}
 
 " Settings {{{
 
 set nocompatible               " Vi compatibility setting
-colorscheme onedark            " Colorscheme
 set background=dark            " Colorscheme background
 set mouse=nv                   " Disable mouse in command-line mode
 set synmaxcol=2500             " Don't syntax highlight long lines
@@ -84,6 +88,7 @@ set smarttab                   " Tab insert blanks according to 'shiftwidth'
 set autoindent                 " Use same indenting on new lines
 set smartindent                " Smart autoindenting on new lines
 set shiftround                 " Round indent to multiple of 'shiftwidth'
+colorscheme gruvbox          " Colorscheme
 set nowrap                     " Disable text wrapping
 set timeout ttimeout           " Configure timeouts
 set timeoutlen=500             " Time out on mappings
