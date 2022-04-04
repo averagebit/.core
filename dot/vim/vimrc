@@ -21,7 +21,7 @@ if has('vim_starting')
   " Disable arrows and map leaders
   let g:elite_mode=1
   let g:mapleader="\<Space>"
-  let g:maplocalleader=';'
+  let g:maplocalleader='\'
 
   " Enable syntax and 24-bit color support
   syntax on
@@ -55,11 +55,28 @@ let g:loaded_rrhelper = 1
 
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
+  Plug 'github/copilot.vim'
+  Plug 'tpope/vim-fugitive'
   Plug 'gruvbox-community/gruvbox'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-  Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
-  Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json'] }
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
+  Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascriptreact'] }
+  Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascriptreact'] }
+  Plug 'neoclide/coc.nvim', {
+          \ 'branch': 'release',
+          \ 'for': [
+              \ 'javascriptreact',
+              \ 'typescriptreact',
+              \ 'javascript',
+              \ 'typescript',
+              \ 'handlebars',
+              \ 'graphql',
+              \ 'json',
+              \ 'html',
+              \ 'css',
+            \ ] 
+        \ }
 call plug#end()
 
 " Gruvbox
@@ -71,71 +88,149 @@ let g:gruvbox_contrast_light='hard'
 
 " Settings {{{
 
-set nocompatible               " Vi compatibility setting
-set background=dark            " Colorscheme background
-set mouse=nv                   " Disable mouse in command-line mode
-set synmaxcol=2500             " Don't syntax highlight long lines
-set history=2000               " Size of history to retain
-set clipboard=unnamed          " Use unnamed clipboard
-set viminfo='20,<1000,s1000    " Prevents truncated yanks, deletes etc.
-set foldmethod=manual          " Disable automatic folding
-set nofoldenable               " Disable automatic folding
-set expandtab                  " Expand tabs to spaces
-set tabstop=2                  " The number of spaces a tab is
-set shiftwidth=2               " Number of spaces to use in auto(indent)
-set softtabstop=-1             " Automatically keeps in sync with shiftwidth
-set smarttab                   " Tab insert blanks according to 'shiftwidth'
-set autoindent                 " Use same indenting on new lines
-set smartindent                " Smart autoindenting on new lines
-set shiftround                 " Round indent to multiple of 'shiftwidth'
+" General {{{
+set nocompatible             " Vi compatibility setting
 colorscheme gruvbox          " Colorscheme
-set nowrap                     " Disable text wrapping
-set timeout ttimeout           " Configure timeouts
-set timeoutlen=500             " Time out on mappings
-set ttimeoutlen=10             " Time out on key codes
-set updatetime=200             " Idle time to write swap and trigger CursorHold
-set redrawtime=1500            " Time in milliseconds for stopping display redraw
-set ignorecase                 " Search ignoring case
-set smartcase                  " Keep case when searching with *
-set infercase                  " Adjust case in insert completion mode
-set incsearch                  " Incremental search
-set wrapscan                   " Searches wrap around the end of the file
-set hlsearch                   " Search highlight
-set splitbelow splitright      " Always split to the bottom right
-set switchbuf=useopen,vsplit   " Jump to the first open window
-set backspace=indent,eol,start " Intuitive backspacing in insert mode
-set scrolloff=2                " Keep at least 2 lines above/below
-set sidescrolloff=5            " Keep at least 5 lines left/right
-set nu rnu                     " Hybrid line numbers
-set cmdheight=2                " Command line height
-set laststatus=0               " Don't display the status line
-set showmode                   " Show mode in cmd window
-set completeopt=menu,menuone   " Always show menu, even for one item
-set completeopt+=noselect      " Do not select a match in the menu
-set showtabline=2              " Always show the tabs line
-set pumheight=15               " Pop-up menu's line height
-set helpheight=12              " Minimum help window height
-set previewheight=12           " Completion preview height
-set noequalalways              " Don't resize windows on split or close
-set colorcolumn=72             " Colur column width/visilbility
-set signcolumn=number          " Sign column visibility (merge with number column)
-set cmdwinheight=5             " Command-line lines
-set formatoptions+=1           " Don't break lines after a one-letter word
-set formatoptions-=o           " Disable comment-continuation (normal 'o'/'O')
-set re=0                       " Regex engine
-set showcmd                    " Show command in status line
-set autoread                   " Autoread if third party changes are detected
-set autowrite                  " Save on buffer leave
-set autowriteall               " Save on buffer leave
+set background=dark          " Colorscheme background
+set mouse=nv                 " Disable mouse in command-line mode
+set synmaxcol=2500           " Don't syntax highlight long lines
+set history=2000             " Size of history to retain
+set clipboard=unnamed        " Use unnamed clipboard
+set viminfo='20,<1000,s1000  " Prevents truncated yanks, deletes etc.
+set splitbelow splitright    " Always split to the bottom right
+set switchbuf=uselast,vsplit " Jump to the last open window
+set re=0                     " Regex engine
+set showcmd                  " Show command in status line
+set autoread                 " Autoread on third party changes
+set autowrite                " Save on buffer leave
+set autowriteall             " Save on buffer leave
+set noswapfile               " Disable swap file
 
 " Autoread
 au FocusLost,WinLeave,BufLeave * :silent! noautocmd wall
+" }}}
+
+" Formatting {{{
+set textwidth=72               " Set text width
+set nowrap                     " Disable text wrapping
+set whichwrap+=h,l,<,>,[,],~   " Move to following line on certain keys
+set linebreak                  " Break long lines at 'breakat'
+set breakat=\ \	;:,!?          " Long lines break chars
+set backspace=indent,eol,start " Intuitive backspacing in insert mode
+
+if exists('&breakindent')
+	set breakindentopt=shift:2,min:20
+endif
+
+set formatoptions+=1   " Don't break lines after a one-letter word
+set formatoptions-=t   " Don't auto-wrap text
+set formatoptions-=o   " Disable comment-continuation (normal 'o'/'O')
+
+if has('patch-7.3.541')
+	set formatoptions+=j " Remove comment leader when joining lines
+endif
+" }}}
+
+" Searching {{{
+set ignorecase " Search ignoring case
+set smartcase  " Keep case when searching with *
+set infercase  " Adjust case in insert completion mode
+set incsearch  " Incremental search
+set wrapscan   " Searches wrap around the end of the file
+" }}}
+
+" Tabs & Indents {{{
+set expandtab         " Expand tabs to spaces
+set tabstop=2         " The number of spaces a tab is
+set shiftwidth=2      " Number of spaces to use in auto(indent)
+set softtabstop=-1    " Automatically keeps in sync with shiftwidth
+set smarttab          " Tab insert blanks according to 'shiftwidth'
+set autoindent        " Use same indenting on new lines
+set smartindent       " Smart autoindenting on new lines
+set shiftround        " Round indent to multiple of 'shiftwidth'
+set foldmethod=indent " Set folding method
+set nofoldenable      " Disable automatic folding
+" }}}
+
+" Timing {{{
+set timeout ttimeout " Configure timeouts
+set timeoutlen=500   " Time out on mappings
+set ttimeoutlen=10   " Time out on key codes
+set updatetime=200   " Idle time to write swap and trigger CursorHold
+set redrawtime=1500  " Time in milliseconds for stopping display redraw
+" }}}
+
+" Command-line completion {{{
+set completeopt=menu,menuone   " Always show menu, even for one item
+set completeopt+=noselect      " Do not select a match in the menu
+
+if has('wildmenu')
+	set wildignorecase
+	set wildignore+=.git,.hg,.svn,.stversions,*.pyc,*.spl,*.o,*.out,*~,%*
+	set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.zip,**/tmp/**,*.DS_Store
+	set wildignore+=**/node_modules/**,**/bower_modules/**,*/.sass-cache/*
+	set wildignore+=__pycache__,*.egg-info,.pytest_cache,.mypy_cache/**
+endif
+" }}}
+
+" Editor UI {{{
+set showmode          " Show mode in cmd window
+set shortmess=aoOTI   " Shorten messages and don't show intro
+set scrolloff=2       " Keep at least 2 lines above/below
+set sidescrolloff=5   " Keep at least 5 lines left/right
+set nu rnu            " Hybrid line numbers
+set noruler           " Disable default status ruler
+set nolist            " Don't show hidden characters
+set hlsearch          " Search highlight
+
+set showtabline=0     " Never show the tabs line
+set helpheight=12     " Minimum help window height
+set winwidth=30       " Minimum width for active window
+set winminwidth=10    " Minimum width for inactive windows
+set winheight=1       " Minimum height for active window
+set winminheight=1    " Minimum height for inactive window
+
+set showcmd           " Command visibility in status line
+set cmdheight=2       " Command line height
+set cmdwinheight=5    " Command line lines
+set noequalalways     " Don't resize windows on split or close
+set laststatus=2      " Status line visibility
+set colorcolumn=+0    " Colur column width at textwidth limit
+set signcolumn=number " Sign column visibility (merge with number column)
+
+" Pop-up menu's max width & height
+set pumheight=15
+if exists('+pumwidth')
+	set pumwidth=10
+endif
 
 " UI Symbols
 set listchars=trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
 
 " Statusline
-set statusline=\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %Y\
+set statusline=\%{FugitiveStatusline()}\ %t\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %y
+" }}}
+
+" Filetype specific configuration {{{
+" --------
+augroup user_plugin_filetype
+	autocmd!
+
+	autocmd FileType crontab setlocal nobackup nowritebackup
+
+	autocmd FileType yaml setlocal expandtab tabstop=2 shiftwidth=2
+
+	autocmd FileType gitcommit,qfreplace setlocal nofoldenable
+
+	autocmd FileType markdown
+		\ setlocal expandtab spell formatoptions=atcroqn2 comments=n:>
+
+augroup END
+" }}}
+
+" }}}
+
+" Keymap {{{
 
 " Allow misspellings
 cnoreabbrev W w
@@ -146,20 +241,29 @@ cnoreabbrev Qa qa
 cnoreabbrev Bd bd
 cnoreabbrev bD bd
 
-" }}}
-
-" Keymap {{{
+" Diff maps
+nmap <Leader>d <cmd>diffget<CR>
+nmap <Leader>dl <cmd>diffget //3<CR>
+nmap <Leader>dh <cmd>diffget //2<CR>
 
 " Resize splits with arrow keys.
 if get(g:, 'elite_mode')
-  nnoremap <silent><Up>    :resize +1<CR>
-  nnoremap <silent><Down>  :resize -1<CR>
-  nnoremap <silent><Left>  :vertical resize +1<CR>
-  nnoremap <silent><Right> :vertical resize -1<CR>
+  nnoremap <silent><Up>    <cmd>resize +1<CR>
+  nnoremap <silent><Down>  <cmd>resize -1<CR>
+  nnoremap <silent><Left>  <cmd>vertical resize +1<CR>
+  nnoremap <silent><Right> <cmd>vertical resize -1<CR>
 endif
 
 " Source .vimrc
-nnoremap <Leader>rr :source ~/.vimrc<CR>
+nnoremap <Leader>rr <cmd>source ~/.vimrc<CR>
+
+" Yank to the end of the line
+nnoremap Y y$
+
+" Maintain cursor position and keep it centered during search & joining
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
 
 " Re-select blocks after indenting in visual/select mode
 xnoremap < <gv
@@ -170,17 +274,17 @@ nmap >>  >>_
 nmap <<  <<_
 
 " Drag current line/s vertically and auto-indent
-nnoremap <Leader>k :m-2<CR>
-nnoremap <Leader>j :m+<CR>
-vnoremap <Leader>k :m'<-2<CR>gv=gv
-vnoremap <Leader>j :m'>+<CR>gv=gv
+nnoremap <Leader>k <cmd>m-2<CR>
+nnoremap <Leader>j <cmd>m+<CR>
+vnoremap <Leader>k <cmd>m'<-2<CR>gv=gv
+vnoremap <Leader>j <cmd>m'>+<CR>gv=gv
 
 " Clear highlight with return
-nnoremap <silent> <CR> :let @/ = ""<CR><CR>
+nnoremap <silent> <CR> <cmd>let @/ = ""<CR><CR>
 
 " Toggle editor's visual effects
 nmap <Leader>ts <cmd>setlocal spell!<CR>
-nmap <Leader>tn <cmd>setlocal nonumber!<CR>
+nmap <Leader>tn <cmd>setlocal nonumber!<CR><cmd>setlocal rnu!<CR>
 nmap <Leader>tl <cmd>setlocal nolist!<CR>
 nmap <Leader>th <cmd>nohlsearch<CR>
 
@@ -194,6 +298,16 @@ nmap <Leader>tg <cmd>echo
 	\ . '> trans<' . synIDattr(synID(line('.'), col('.'), 0), 'name') . '> lo<'
 	\ . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name') . '>'<CR>
 
+" Append modeline
+" See: http://vim.wikia.com/wiki/Modeline_magic
+function! s:append_modeline() "{{{
+	let l:modeline = printf(' vim: set ts=%d sw=%d tw=%d %set :',
+				\ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+	let l:modeline = substitute(&commentstring, '%s', l:modeline, '')
+	call append(line('$'), l:modeline)
+endfunction "}}}
+nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
+
 " }}}
 
 " Plugin Settings {{{
@@ -202,11 +316,11 @@ nmap <Leader>tg <cmd>echo
 let g:rustfmt_autosave = 1
 let g:rust_clip_command = 1
 
-au FileType rust nmap <leader>c :Ccheck<CR>
-au FileType rust nmap <leader>b :Cbuild<CR>
-au FileType rust nmap <leader>r :RustRun<CR>
-au FileType rust nmap <leader>t :RustTest<CR>
-au FileType rust nmap <leader>tt :RustTest!<CR>
+au FileType rust nmap <leader>c <cmd>Ccheck<CR>
+au FileType rust nmap <leader>b <cmd>Cbuild<CR>
+au FileType rust nmap <leader>r <cmd>RustRun<CR>
+au FileType rust nmap <leader>t <cmd>RustTest<CR>
+au FileType rust nmap <leader>tt <cmd>RustTest!<CR>
 
 " Golang
 let g:go_highlight_array_whitespace_error = 1
@@ -235,13 +349,15 @@ au FileType go nmap <leader>t <Plug>(go-test-func)
 au FileType go nmap <leader>tt <Plug>(go-test)
 
 " FZF
-let $FZF_DEFAULT_COMMAND = 'rg --files'
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = 'rg --files'
+endif
 nmap <C-p> :FZF<CR>
 
 " netrw
-" let g:netrw_altv = 1
+let g:netrw_altv = 1
 let g:netrw_banner = 0
-let g:netrw_winsize = 18
+let g:netrw_winsize = 23
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_sort_sequence = '[\/]$,*'
@@ -249,3 +365,5 @@ let g:netrw_sort_sequence = '[\/]$,*'
 map <silent> <LocalLeader>e :Lexplore<CR>
 
 " }}}
+
+" vim: set foldmethod=marker ts=2 sw=2 tw=72 et :
