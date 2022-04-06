@@ -298,9 +298,7 @@ nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 " Load plugins
 call plug#begin(expand($DATA_PATH . '/plugins'))
   " Plug 'github/copilot.vim'
-  Plug 'catppuccin/nvim', {'as': 'catppuccin'}
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
-  Plug 'gruvbox-community/gruvbox'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
   Plug 'tpope/vim-fugitive'
@@ -316,6 +314,12 @@ call plug#begin(expand($DATA_PATH . '/plugins'))
             \'css',
           \] 
         \}
+
+  if has('nvim')
+    Plug 'catppuccin/nvim', {'as': 'catppuccin'}
+  else
+    Plug 'gruvbox-community/gruvbox'
+  endif
 call plug#end()
 
 " Coc
@@ -344,14 +348,13 @@ augroup UserCocGroup
 	autocmd BufNew,BufEnter * call s:user_toggle_coc_for_type()
 augroup end
 
-" Gruvbox
-let g:gruvbox_bold='0'
-let g:gruvbox_contrast_dark='hard'
-let g:gruvbox_contrast_light='hard'
-
 if has('nvim')
   colorscheme catppuccin
 else
+  let g:gruvbox_bold='0'
+  let g:gruvbox_contrast_dark='hard'
+  let g:gruvbox_contrast_light='hard'
+
   colorscheme gruvbox
 endif
 
