@@ -1,4 +1,5 @@
 " Initialize {{{
+" ----------
 
 if has('vim_starting')
   " Set data/cache directory as $XDG_CACHE_HOME/vim
@@ -6,13 +7,15 @@ if has('vim_starting')
 
   " Install vim-plug and plugins if not installed
   if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    silent !curl -fLo ~/.vim/autoload/plug.vim 
+          \--create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
 
   if has('nvim')
     if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-      silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim 
+            \--create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
     set guicursor=
@@ -53,45 +56,11 @@ let g:loaded_rrhelper = 1
 " let g:loaded_netrwSettings = 1
 " let g:loaded_netrwFileHandlers = 1
 
-" Load plugins
-call plug#begin(expand($DATA_PATH . '/plugins'))
-  Plug 'github/copilot.vim'
-  Plug 'tpope/vim-fugitive'
-  Plug 'gruvbox-community/gruvbox'
-  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
-  Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascriptreact'] }
-  Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascriptreact'] }
-  Plug 'neoclide/coc.nvim', {
-          \ 'branch': 'release',
-          \ 'for': [
-              \ 'javascriptreact',
-              \ 'typescriptreact',
-              \ 'javascript',
-              \ 'typescript',
-              \ 'handlebars',
-              \ 'graphql',
-              \ 'json',
-              \ 'html',
-              \ 'css',
-            \ ] 
-        \ }
-call plug#end()
-
-" Gruvbox
-let g:gruvbox_bold='0'
-let g:gruvbox_contrast_dark='medium'
-let g:gruvbox_contrast_light='hard'
-
 " }}}
-
-" Settings {{{
-
 " General {{{
+" -------
+
 set nocompatible             " Vi compatibility setting
-colorscheme gruvbox          " Colorscheme
-set background=dark          " Colorscheme background
 set mouse=nv                 " Disable mouse in command-line mode
 set synmaxcol=2500           " Don't syntax highlight long lines
 set history=2000             " Size of history to retain
@@ -108,9 +77,11 @@ set noswapfile               " Disable swap file
 
 " Autoread
 au FocusLost,WinLeave,BufLeave * :silent! noautocmd wall
-" }}}
 
+" }}}
 " Formatting {{{
+" ----------
+
 set textwidth=72               " Set text width
 set nowrap                     " Disable text wrapping
 set whichwrap+=h,l,<,>,[,],~   " Move to following line on certain keys
@@ -129,17 +100,21 @@ set formatoptions-=o   " Disable comment-continuation (normal 'o'/'O')
 if has('patch-7.3.541')
 	set formatoptions+=j " Remove comment leader when joining lines
 endif
-" }}}
 
+" }}}
 " Searching {{{
+" ---------
+
 set ignorecase " Search ignoring case
 set smartcase  " Keep case when searching with *
 set infercase  " Adjust case in insert completion mode
 set incsearch  " Incremental search
 set wrapscan   " Searches wrap around the end of the file
-" }}}
 
+" }}}
 " Tabs & Indents {{{
+" --------------
+
 set expandtab         " Expand tabs to spaces
 set tabstop=2         " The number of spaces a tab is
 set shiftwidth=2      " Number of spaces to use in auto(indent)
@@ -150,17 +125,21 @@ set smartindent       " Smart autoindenting on new lines
 set shiftround        " Round indent to multiple of 'shiftwidth'
 set foldmethod=indent " Set folding method
 set nofoldenable      " Disable automatic folding
-" }}}
 
+" }}}
 " Timing {{{
+" ------
+
 set timeout ttimeout " Configure timeouts
 set timeoutlen=500   " Time out on mappings
 set ttimeoutlen=10   " Time out on key codes
 set updatetime=200   " Idle time to write swap and trigger CursorHold
 set redrawtime=1500  " Time in milliseconds for stopping display redraw
-" }}}
 
-" Command-line completion {{{
+" }}}
+" Completion {{{
+" ----------
+
 set completeopt=menu,menuone   " Always show menu, even for one item
 set completeopt+=noselect      " Do not select a match in the menu
 
@@ -171,9 +150,11 @@ if has('wildmenu')
 	set wildignore+=**/node_modules/**,**/bower_modules/**,*/.sass-cache/*
 	set wildignore+=__pycache__,*.egg-info,.pytest_cache,.mypy_cache/**
 endif
-" }}}
 
+" }}}
 " Editor UI {{{
+" ---------
+
 set showmode          " Show mode in cmd window
 set shortmess=aoOTI   " Shorten messages and don't show intro
 set scrolloff=2       " Keep at least 2 lines above/below
@@ -196,7 +177,7 @@ set cmdwinheight=5    " Command line lines
 set noequalalways     " Don't resize windows on split or close
 set laststatus=2      " Status line visibility
 set colorcolumn=+0    " Colur column width at textwidth limit
-set signcolumn=number " Sign column visibility (merge with number column)
+set signcolumn=number " Sign column visibility (merge w\ number column)
 
 " Pop-up menu's max width & height
 set pumheight=15
@@ -207,12 +188,15 @@ endif
 " UI Symbols
 set listchars=trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
 
-" Statusline
-set statusline=\%{FugitiveStatusline()}\ %t\ %=\ Ln\ %l,\ Col\ %c\ %{&fileencoding?&fileencoding:&encoding}\ %y
-" }}}
+" Status line
+let e = &fileencoding?&fileencoding:&encoding
+set statusline=\%{FugitiveStatusline()}\ %t\ 
+      \%=\ Ln\ %l,\ Col\ %c\ %{e}\ %y
 
+" }}}
 " Filetype specific configuration {{{
-" --------
+" -------------------------------
+
 augroup user_plugin_filetype
 	autocmd!
 
@@ -226,11 +210,10 @@ augroup user_plugin_filetype
 		\ setlocal expandtab spell formatoptions=atcroqn2 comments=n:>
 
 augroup END
-" }}}
 
 " }}}
-
 " Keymap {{{
+" ------
 
 " Allow misspellings
 cnoreabbrev W w
@@ -309,8 +292,70 @@ endfunction "}}}
 nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 
 " }}}
+" Plugins {{{
+" -------
 
-" Plugin Settings {{{
+" Load plugins
+call plug#begin(expand($DATA_PATH . '/plugins'))
+  " Plug 'github/copilot.vim'
+  Plug 'catppuccin/nvim', {'as': 'catppuccin'}
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
+  Plug 'gruvbox-community/gruvbox'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+  Plug 'tpope/vim-fugitive'
+  Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': [
+            \'javascriptreact',
+            \'typescriptreact',
+            \'javascript',
+            \'typescript',
+            \'handlebars',
+            \'graphql',
+            \'json',
+            \'html',
+            \'css',
+          \] 
+        \}
+call plug#end()
+
+" Coc
+let s:user_coc_filetypes = [
+        \'javascriptreact',
+        \'typescriptreact',
+        \'javascript',
+        \'typescript',
+        \'handlebars',
+        \'graphql',
+        \'json',
+        \'html',
+        \'css',
+      \]
+
+function! s:user_toggle_coc_for_type()
+	if index(s:user_coc_filetypes, &filetype) == -1
+    :silent! CocDisable
+  else
+    :silent! CocEnable
+	endif
+endfunction
+
+augroup UserCocGroup
+	autocmd!
+	autocmd BufNew,BufEnter * call s:user_toggle_coc_for_type()
+augroup end
+
+" Gruvbox
+let g:gruvbox_bold='0'
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_contrast_light='hard'
+
+if has('nvim')
+  colorscheme catppuccin
+else
+  colorscheme gruvbox
+endif
+
+set background=dark
 
 " Rust
 let g:rustfmt_autosave = 1
@@ -348,13 +393,13 @@ au FileType go nmap <leader>r <Plug>(go-run-split)
 au FileType go nmap <leader>t <Plug>(go-test-func)
 au FileType go nmap <leader>tt <Plug>(go-test)
 
-" FZF
+" Fzf
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files'
 endif
 nmap <C-p> :FZF<CR>
 
-" netrw
+" Netrw
 let g:netrw_altv = 1
 let g:netrw_banner = 0
 let g:netrw_winsize = 23
