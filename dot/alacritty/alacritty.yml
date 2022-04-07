@@ -28,15 +28,15 @@ key_bindings:
 
 font:
   normal:
-    family: Fira Code
+    family: Hack
   bold:
-    family: Fira Code
+    family: Hack
   italic:
-    family: Fira Code
+    family: Hack
   size: 13
   offset:
     x: 0
-    y: 3
+    y: 0
 
 schemes:
   catppuccin: &catppuccin

@@ -73,6 +73,7 @@ set showcmd                  " Show command in status line
 set autoread                 " Autoread on third party changes
 set autowrite                " Save on buffer leave
 set autowriteall             " Save on buffer leave
+set nomodeline               " Disable modeline
 set noswapfile               " Disable swap file
 
 " Autoread
@@ -188,10 +189,27 @@ endif
 " UI Symbols
 set listchars=trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
 
+function! GitBranch()
+  return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+endfunction
+
+function! StatuslineGit()
+  let l:branchname = GitBranch()
+  return strlen(l:branchname) > 0 ? '  ' . l:branchname . ' ' : ''
+endfunction
+
 " Status line
-let e = &fileencoding?&fileencoding:&encoding
-set statusline=\%{FugitiveStatusline()}\ %t\ 
-      \%=\ Ln\ %l,\ Col\ %c\ %{e}\ %y
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%{StatuslineGit()}
+set statusline+=%#StatusLine#
+set statusline+=\ %f
+set statusline+=%=
+set statusline+=\ \ %m
+set statusline+=\ \ %(Ln\ %l,\ Col\ %c%)
+set statusline+=\ \ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ \ %y
+set statusline+=\ 
 
 " }}}
 " Filetype specific configuration {{{
@@ -199,6 +217,8 @@ set statusline=\%{FugitiveStatusline()}\ %t\
 
 augroup user_plugin_filetype
 	autocmd!
+
+	autocmd FileType tmux,vim setlocal foldenable foldmethod=marker
 
 	autocmd FileType crontab setlocal nobackup nowritebackup
 
@@ -414,4 +434,4 @@ map <silent> <LocalLeader>e :Lexplore<CR>
 
 " }}}
 
-" vim: set foldmethod=marker ts=2 sw=2 tw=72 et :
+" vim: set foldenable foldmethod=marker ts=2 sw=2 tw=72 et :
