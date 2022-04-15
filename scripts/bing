@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 exec lynx "www.bing.com/search?q=$(urlencode "$*")"
 

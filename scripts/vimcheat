@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 echo "!ip  - send the paragraph to shell command
 <ip  - unindent paragraph

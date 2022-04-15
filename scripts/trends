@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 open "https://trends.google.com/trends/explore?q=$(urlencode "$*")"
 

@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 if [[ -r "$1" ]]; then
   [[ -n "$(command -v pbcopy)" ]] && exec pbcopy < "$1"

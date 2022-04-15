@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 # Work in progress note management tool
 
 set -e

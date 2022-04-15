@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 [[ -n "$1" ]] && exec curl -s "ix.io/$1"
 
