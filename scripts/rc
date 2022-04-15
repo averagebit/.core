@@ -1,9 +1,13 @@
 !/bin/bash
 
+cd "${CORE}"
+
 case "$1" in
-  v*) exec vi "${HOME}/.vimrc" ;;
-  t*) exec vi "${HOME}/.tmux.conf" ;;
-  b*) exec vi "${HOME}/.bashrc" ;;
-  a*) exec vi "${HOME}/.config/alacritty.yml" ;;
+  v*) exec vi "${CORE}/dot/vim/vimrc" ;;
+  t*) exec vi "${CORE}/dot/tmux/tmux.conf" ;;
+  b*) exec vi "${CORE}/dot/shell/bashrc" ;;
+  a*) exec vi "${CORE}/dot/alacritty/alacritty.yml" ;;
   ssh) exec vi "${HOME}/.ssh/config" ;;
 esac
+
+cd -
