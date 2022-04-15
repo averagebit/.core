@@ -1,26 +1,54 @@
 #!/bin/bash
 
-echo "!ip  - send the paragraph to shell command
+echo "Vim cheatsheet
+
+[c,v,d,y][a,i][b,B,f,p,w,W]
+---------------------------
+b   - ()
+B   - {}
+f   - function
+p   - paragraph
+w   - word
+W   - word (can contain punctuation)
+viw - select inner word
+viW - select inner word (can contain punctuation)
+vip - select inner paragraph
+vif - select inner function
+vib - select inner block wih ()
+viB - select inner block with {}
+
+Extras
+------
+.    - repeat last command
+}    - jump to next paragraph
+{    - jump to previous paragraph
+I    - insert at the beginning of the line
+o    - append (open) a new line below the current line
+O    - append (open) a new line above the current line
+ea   - append to word
+s    - delete character and substitute text
+S    - delete line and substitute text (same as cc)
+cc   - change (replace) entire line
+c$   - change (replace) to the end of the line
+fx   - jump to next occurrence of character x
+tx   - jump to one character before the character x
+xp   - transpose two letters (delete and paste)
 <ip  - unindent paragraph
 >ip  - indent paragraph
-caw  - change around word
-ciw  - change word
-cw   - change to end of word
-daW  - delete around larger word
-daf  - delete function
-dap  - delete around paragraph
-daw  - delete around word
-dd   - delete the line
-diW  - delete larger word
-dif  - delete inner function
-dip  - delete paragraph
-diw  - delete word
-dw   - delete to beginning of next word
-ea   - append to word
 gq   - wrap selected lines
 gqap - wrap around paragraph
 gqip - wrap paragraph
-yaf  - yank function
-yap  - yank around paragraph
-yif  - yank inner function
-yip  - yank paragraph"
+nG   - go to line number n
+zj   - jump to next fold
+zk   - jump to previous fold
+za   - toggle fold under cursor
+zo   - open fold under cursor
+zc   - close fold under cursor
+"
+
+
+# echo "dd   - delete the line
+# daf  - delete function
+# dif  - delete inner function
+# dw   - delete to beginning of next word
+# !ip  - send the paragraph to shell command"

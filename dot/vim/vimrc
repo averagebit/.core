@@ -67,7 +67,7 @@ set history=2000             " Size of history to retain
 set clipboard=unnamed        " Use unnamed clipboard
 set viminfo='20,<1000,s1000  " Prevents truncated yanks, deletes etc.
 set splitbelow splitright    " Always split to the bottom right
-set switchbuf=uselast,vsplit " Jump to the last open window
+set switchbuf=uselast        " Jump to the last open window
 set re=0                     " Regex engine
 set showcmd                  " Show command in status line
 set autoread                 " Autoread on third party changes
@@ -210,6 +210,7 @@ set statusline+=\ \ %(Ln\ %l,\ Col\ %c%)
 set statusline+=\ \ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ \ %y
 set statusline+=\ 
+
 
 " }}}
 " Filetype specific configuration {{{
@@ -368,6 +369,7 @@ augroup UserCocGroup
 	autocmd BufNew,BufEnter * call s:user_toggle_coc_for_type()
 augroup end
 
+" Colorscheme
 if has('nvim')
   colorscheme catppuccin
 else
@@ -379,6 +381,11 @@ else
 endif
 
 set background=dark
+
+" Disable background
+hi Normal guibg=NONE ctermbg=NONE
+hi NormalNC guibg=NONE ctermbg=NONE
+hi NonText guibg=NONE ctermbg=NONE
 
 " Rust
 let g:rustfmt_autosave = 1
@@ -419,6 +426,7 @@ au FileType go nmap <leader>tt <Plug>(go-test)
 " Fzf
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files'
+  let $FZF_DEFAULT_OPTS='--color=bg+:#302D41,spinner:#F8BD96,hl:#F28FAD --color=fg:#D9E0EE,header:#F28FAD,info:#DDB6F2,pointer:#F8BD96 --color=marker:#F8BD96,fg+:#F2CDCD,prompt:#DDB6F2,hl+:#F28FAD'
 endif
 nmap <C-p> :FZF<CR>
 
