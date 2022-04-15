@@ -8,7 +8,7 @@ file="$(
     | head -n 1
 )"
 
-mkdir -p "${HOME}/.local/share"
+mkdir -p "${HOME}/.local/share" "${HOME}/.local/bin"
 rm -rf "${HOME}/.local/share/go"
 
 curl -L "https://go.dev/dl/${file}" > "${HOME}/.local/share/${file}"
