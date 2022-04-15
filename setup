@@ -1,6 +1,7 @@
 #!/bin/bash
 
 unset CDPATH
+umask 0077
 
 if [[ "${USER}" ]]; then
   mkdir -p "${HOME}/Workspace/vms" \
@@ -8,6 +9,7 @@ if [[ "${USER}" ]]; then
     "${HOME}/Workspace/repos/github/${USER}" \
     "${HOME}/Workspace/repos/gitlab/${USER}" \
     "${HOME}/Documents" \
+    "${HOME}/Downloads" \
     "${HOME}/Music" \
     "${HOME}/Pictures" \
     "${HOME}/Private" \
