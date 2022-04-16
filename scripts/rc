@@ -1,9 +1,9 @@
-!/bin/bash
+#!/bin/bash
 
 case "$1" in
-  v*) exec vi "${HOME}/.vimrc" ;;
-  t*) exec vi "${HOME}/.tmux.conf" ;;
-  b*) exec vi "${HOME}/.bashrc" ;;
-  a*) exec vi "${HOME}/.config/alacritty.yml" ;;
+  vi*) exec vi "${HOME}/.core/dot/vim/vimrc" ;;
+  tm*) exec vi "${HOME}/.core/dot/tmux/tmux.conf" ;;
+  ba*) exec vi "${HOME}/.core/dot/shell/bashrc" ;;
+  al*) exec vi "${HOME}/.core/dot/alacritty/alacritty.yml" ;;
   ssh) exec vi "${HOME}/.ssh/config" ;;
 esac

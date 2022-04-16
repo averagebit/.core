@@ -3,7 +3,7 @@
 
 if has('vim_starting')
   " Set data/cache directory as $XDG_CACHE_HOME/vim
-  let $DATA_PATH = expand(($XDG_CACHE_HOME ? $XDG_CACHE_HOME : '~/.cache') . '/vim', 1)
+  let $VIM_DATA_PATH = expand(($XDG_CACHE_HOME ? $XDG_CACHE_HOME : '~/.cache') . '/vim', 1)
 
   " Install vim-plug and plugins if not installed
   if empty(glob('~/.vim/autoload/plug.vim'))
@@ -316,7 +316,7 @@ nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 " -------
 
 " Load plugins
-call plug#begin(expand($DATA_PATH . '/plugins'))
+call plug#begin(expand($VIM_DATA_PATH . '/plugins'))
   " Plug 'github/copilot.vim'
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
