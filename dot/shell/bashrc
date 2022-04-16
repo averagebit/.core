@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Globals
+# Globals {{{
+# -------
+
 set -o vi
 umask 0077
 
@@ -66,7 +68,10 @@ if [[ $(command -v dircolors) ]]; then
   fi
 fi
 
-# Prompt
+# }}}
+# Prompt {{{
+# ------
+
 __prompt() {
   local username='\u' hostname='\h' character='❯' status="$?" status_color \
         git_branch format directory_prefix directory directory_suffix \
@@ -92,7 +97,10 @@ __prompt() {
 
 PROMPT_COMMAND="__prompt"
 
-# Aliases
+# }}}
+# Aliases {{{
+# -------
+
 unalias -a
 alias '?'='duck'
 alias '??'='google'
@@ -106,7 +114,10 @@ alias temp="cd $(mktemp -d)"
 alias tmux="tmux -f ${HOME}/.config/tmux/tmux.conf"
 alias chmox="chmod u+x"
 
-# Functions
+# }}}
+# Functions {{{
+# ---------
+
 reload() {
   source "${HOME}/.bashrc"
 
@@ -115,7 +126,10 @@ reload() {
   fi
 }
 
-# Completion
+# }}}
+# Completion {{{
+# ----------
+
 comp=(vis pdf)
 
 for exe in ${comp[@]}; do complete -C "${exe}" "${exe}"; done
@@ -131,6 +145,13 @@ else
   fi
 fi
 
+# }}}
+# Source {{{
+# ------
+
 # Source private bashrc
 [[ -f "${HOME}/.bashrc_private" ]] && source "${HOME}/.bashrc_private"
 
+# }}}
+
+# vim: set foldenable foldmethod=marker ts=2 sw=2 tw=72 et :

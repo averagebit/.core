@@ -212,7 +212,7 @@ command_open() {
   fi
 
   cd "$(zet_root_path)"
-  mdbook build
+  ./build
   mdbook serve -p 10000 --open
 }
 

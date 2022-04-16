@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+cd "${CORE}"
 
 case "$1" in
   vi*) exec vi "${HOME}/.core/dot/vim/vimrc" ;;
@@ -7,3 +9,5 @@ case "$1" in
   al*) exec vi "${HOME}/.core/dot/alacritty/alacritty.yml" ;;
   ssh) exec vi "${HOME}/.ssh/config" ;;
 esac
+
+cd -
