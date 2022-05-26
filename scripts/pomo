@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 #
 # An implementation of the pomodoro technique in bash made with tmux in
 # mind.
@@ -22,7 +22,7 @@ declare -A HELP
 HELP[main]="${EXE}
 
 If a session has been started and the script is called without an
-argument it will display the remaining time until the next session/break.
+argument it will display the remaining time until the next interval.
 
 USAGE: ${EXE} [SUBCOMMAND] [ARG]
 
@@ -170,6 +170,7 @@ command_print() {
   # If all sessions are complete start a negative countdown from `now`
   if [[ "${session_current}" == "${session_total}" ]]; then
     command_stop
+    CONFIG[session_current]="0"
     CONFIG[session_emoji]="${emoji_free}"
     CONFIG[session_end]="${now}"
     config_write
@@ -210,7 +211,7 @@ command_print() {
   [[ ${minutes} == '0m ' ]] && minutes=''
   [[ ${hours} == '0h ' ]] && hours=''
 
-  format="${session_emoji} ${hours}${minutes}${seconds}"
+  format="S${session_current} ${session_emoji} ${hours}${minutes}${seconds}"
   echo "${format}"
 }
 

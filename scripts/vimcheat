@@ -20,6 +20,8 @@ viB - select inner block with {}
 Extras
 ------
 .    - repeat last command
+;    - repeat last f/F/t/T action forward
+,    - repeat last f/F/t/T action backwards
 }    - jump to next paragraph
 {    - jump to previous paragraph
 I    - insert at the beginning of the line
@@ -43,7 +45,13 @@ zj   - jump to next fold
 zk   - jump to previous fold
 za   - toggle fold under cursor
 zo   - open fold under cursor
+zO   - open fold under cursor recursively
 zc   - close fold under cursor
+zC   - close fold under cursor recursively
+zR   - open all folds
+zM   - close all folds
+zj   - move cursor to next fold
+zk   - move cursor to previous fold
 "
 
 

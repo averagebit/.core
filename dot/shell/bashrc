@@ -122,7 +122,7 @@ reload() {
   source "${HOME}/.bashrc"
 
   if [[ $(command -v tmux) ]]; then
-    tmux source-file "${HOME}/.tmux.conf"
+    tmux source-file "${HOME}/.config/tmux/tmux.conf"
   fi
 }
 

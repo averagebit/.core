@@ -117,8 +117,8 @@ set wrapscan   " Searches wrap around the end of the file
 " --------------
 
 set expandtab         " Expand tabs to spaces
-set tabstop=2         " The number of spaces a tab is
-set shiftwidth=2      " Number of spaces to use in auto(indent)
+set tabstop=4         " The number of spaces a tab is
+set shiftwidth=4      " Number of spaces to use in auto(indent)
 set softtabstop=-1    " Automatically keeps in sync with shiftwidth
 set smarttab          " Tab insert blanks according to 'shiftwidth'
 set autoindent        " Use same indenting on new lines
@@ -228,7 +228,7 @@ augroup user_plugin_filetype
 	autocmd FileType gitcommit,qfreplace setlocal nofoldenable
 
 	autocmd FileType markdown
-		\ setlocal expandtab spell formatoptions=atcroqn2 comments=n:>
+		\ setlocal expandtab spell formatoptions=tcroqn2 comments=n:>
 
 augroup END
 
@@ -246,20 +246,20 @@ cnoreabbrev Bd bd
 cnoreabbrev bD bd
 
 " Diff maps
-nmap <Leader>d <cmd>diffget<CR>
+nmap <Leader>dd <cmd>diffget<CR>
 nmap <Leader>dl <cmd>diffget //3<CR>
 nmap <Leader>dh <cmd>diffget //2<CR>
 
 " Resize splits with arrow keys.
 if get(g:, 'elite_mode')
-  nnoremap <silent><Up>    <cmd>resize +1<CR>
-  nnoremap <silent><Down>  <cmd>resize -1<CR>
-  nnoremap <silent><Left>  <cmd>vertical resize +1<CR>
-  nnoremap <silent><Right> <cmd>vertical resize -1<CR>
+  nnoremap <silent><Up>    <cmd>resize +10<CR>
+  nnoremap <silent><Down>  <cmd>resize -10<CR>
+  nnoremap <silent><Left>  <cmd>vertical resize +10<CR>
+  nnoremap <silent><Right> <cmd>vertical resize -10<CR>
 endif
 
 " Source .vimrc
-nnoremap <Leader>rr <cmd>source ~/.vimrc<CR>
+nnoremap <Leader>rr <cmd>source ~/.vim/vimrc<CR>
 
 " Yank to the end of the line
 nnoremap Y y$
@@ -319,11 +319,12 @@ nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 " Load plugins
 call plug#begin(expand($VIM_DATA_PATH . '/plugins'))
   " Plug 'github/copilot.vim'
-  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
-  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-  Plug 'tpope/vim-fugitive'
-  Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': [
+    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+    Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+    Plug 'tpope/vim-fugitive'
+    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'for': [
             \'javascriptreact',
             \'typescriptreact',
             \'javascript',
@@ -333,8 +334,8 @@ call plug#begin(expand($VIM_DATA_PATH . '/plugins'))
             \'json',
             \'html',
             \'css',
-          \] 
-        \}
+        \] 
+    \}
 
   if has('nvim')
     Plug 'catppuccin/nvim', {'as': 'catppuccin'}
@@ -354,7 +355,7 @@ let s:user_coc_filetypes = [
         \'json',
         \'html',
         \'css',
-      \]
+    \]
 
 function! s:user_toggle_coc_for_type()
 	if index(s:user_coc_filetypes, &filetype) == -1
@@ -398,6 +399,7 @@ au FileType rust nmap <leader>t <cmd>RustTest<CR>
 au FileType rust nmap <leader>tt <cmd>RustTest!<CR>
 
 " Golang
+" let g:go_debug=['shell-commands']
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_extra_types = 1
@@ -417,18 +419,31 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_diagnostic_errors = 1
 let g:go_highlight_diagnostic_warnings = 1
+let g:go_debug_windows = {
+      \ 'vars':       'rightbelow 60vnew',
+      \ 'stack':      'rightbelow 10new',
+\ }
 
 au FileType go nmap <leader>b <Plug>(go-build)
 au FileType go nmap <leader>r <Plug>(go-run-split)
 au FileType go nmap <leader>t <Plug>(go-test-func)
 au FileType go nmap <leader>tt <Plug>(go-test)
+au FileType go nmap <leader>dq :GoDebugStop<CR>
+au FileType go nmap <leader>dx :GoDebugStart<CR>
+au FileType go nmap <leader>dn :GoDebugNext<CR>
+au FileType go nmap <leader>ds :GoDebugStep<CR>
+au FileType go nmap <leader>db :GoDebugBreakpoint<CR>
+au FileType go nmap <leader>dc :GoDebugContinue<CR>
 
 " Fzf
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files'
-  let $FZF_DEFAULT_OPTS='--color=bg+:#302D41,spinner:#F8BD96,hl:#F28FAD --color=fg:#D9E0EE,header:#F28FAD,info:#DDB6F2,pointer:#F8BD96 --color=marker:#F8BD96,fg+:#F2CDCD,prompt:#DDB6F2,hl+:#F28FAD'
+  let $FZF_DEFAULT_OPTS='--layout=reverse --preview-window=bottom,60%,border-top --margin=0 --padding=0 --color=bg+:#302D41,spinner:#F8BD96,hl:#F28FAD --color=fg:#D9E0EE,header:#F28FAD,info:#DDB6F2,pointer:#F8BD96 --color=marker:#F8BD96,fg+:#F2CDCD,prompt:#DDB6F2,hl+:#F28FAD'
 endif
-nmap <C-p> :FZF<CR>
+
+nmap <leader>p :FZF<CR>
+nmap <leader>e :Rg<CR>
+nmap <leader>o :e#<CR>
 
 " Netrw
 let g:netrw_altv = 1
