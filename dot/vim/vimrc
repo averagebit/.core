@@ -173,7 +173,7 @@ set winheight=1       " Minimum height for active window
 set winminheight=1    " Minimum height for inactive window
 
 set showcmd           " Command visibility in status line
-set cmdheight=2       " Command line height
+set cmdheight=1       " Command line height
 set cmdwinheight=5    " Command line lines
 set noequalalways     " Don't resize windows on split or close
 set laststatus=2      " Status line visibility
@@ -226,6 +226,8 @@ augroup user_plugin_filetype
 	autocmd FileType yaml setlocal expandtab tabstop=2 shiftwidth=2
 
 	autocmd FileType gitcommit,qfreplace setlocal nofoldenable
+
+    autocmd FileType qf setlocal wrap
 
 	autocmd FileType markdown
 		\ setlocal expandtab spell formatoptions=tcroqn2 comments=n:>
@@ -320,6 +322,7 @@ nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 call plug#begin(expand($VIM_DATA_PATH . '/plugins'))
   " Plug 'github/copilot.vim'
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
+    Plug 'averagebit/vim-go-testify', { 'for': ['go'] }
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
@@ -400,6 +403,8 @@ au FileType rust nmap <leader>tt <cmd>RustTest!<CR>
 
 " Golang
 " let g:go_debug=['shell-commands']
+let g:go_list_height = 10
+let g:go_test_show_name = 1
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_extra_types = 1
@@ -424,10 +429,10 @@ let g:go_debug_windows = {
       \ 'stack':      'rightbelow 10new',
 \ }
 
-au FileType go nmap <leader>b <Plug>(go-build)
+au FileType go nmap <leader>b :GoBuild<CR>
 au FileType go nmap <leader>r <Plug>(go-run-split)
-au FileType go nmap <leader>t <Plug>(go-test-func)
-au FileType go nmap <leader>tt <Plug>(go-test)
+au FileType go nmap <leader>t :GoTestifyFunc<CR>
+au FileType go nmap <leader>tt :GoTest<CR>
 au FileType go nmap <leader>dq :GoDebugStop<CR>
 au FileType go nmap <leader>dx :GoDebugStart<CR>
 au FileType go nmap <leader>dn :GoDebugNext<CR>
