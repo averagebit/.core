@@ -247,11 +247,6 @@ cnoreabbrev Qa qa
 cnoreabbrev Bd bd
 cnoreabbrev bD bd
 
-" Diff maps
-nmap <Leader>dd <cmd>diffget<CR>
-nmap <Leader>dl <cmd>diffget //3<CR>
-nmap <Leader>dh <cmd>diffget //2<CR>
-
 " Resize splits with arrow keys.
 if get(g:, 'elite_mode')
   nnoremap <silent><Up>    <cmd>resize +10<CR>
@@ -320,7 +315,7 @@ nnoremap <Leader>ml <cmd>call <SID>append_modeline()<CR>
 
 " Load plugins
 call plug#begin(expand($VIM_DATA_PATH . '/plugins'))
-  " Plug 'github/copilot.vim'
+    " Plug 'github/copilot.vim'
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': ['go'] }
     Plug 'averagebit/vim-go-testify', { 'for': ['go'] }
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -405,6 +400,10 @@ au FileType rust nmap <leader>tt <cmd>RustTest!<CR>
 " let g:go_debug=['shell-commands']
 let g:go_list_height = 10
 let g:go_test_show_name = 1
+let g:go_debug_windows = {
+      \ 'vars':       'rightbelow 60vnew',
+      \ 'stack':      'rightbelow 10new',
+\ }
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_extra_types = 1
@@ -424,10 +423,6 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_diagnostic_errors = 1
 let g:go_highlight_diagnostic_warnings = 1
-let g:go_debug_windows = {
-      \ 'vars':       'rightbelow 60vnew',
-      \ 'stack':      'rightbelow 10new',
-\ }
 
 au FileType go nmap <leader>b :GoBuild<CR>
 au FileType go nmap <leader>r <Plug>(go-run-split)
@@ -449,6 +444,12 @@ endif
 nmap <leader>p :FZF<CR>
 nmap <leader>e :Rg<CR>
 nmap <leader>o :e#<CR>
+
+" Fugitive
+nmap <leader>diff :Gvdiffsplit!<CR>
+nmap <Leader>dd <cmd>diffget<CR>
+nmap <Leader>dl <cmd>diffget //3<CR>
+nmap <Leader>dh <cmd>diffget //2<CR>
 
 " Netrw
 let g:netrw_altv = 1

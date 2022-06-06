@@ -149,7 +149,7 @@ zet_commit() {
     read -rp 'Commit? ' res
     if [[ "${res}" =~ ^[Yy] ]]; then
       git pull -q
-      git add -A "${dir}"
+      git add "${dir}"
       git commit -m "${title}"
       exec git push -u origin main
     fi
