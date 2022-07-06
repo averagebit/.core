@@ -139,7 +139,7 @@ alias l='/bin/ls -G --color'
 alias ls='/bin/ls -lahG --color'
 alias temp="cd $(mktemp -d)"
 alias tmux="tmux -f ${HOME}/.config/tmux/tmux.conf"
-alias chmox="chmod u+x"
+alias chmox="chmod +x"
 
 # Functions
 reload() {
