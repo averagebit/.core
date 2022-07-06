@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-os=linux
+os=darwin
 arch=amd64
 file="$(
   curl -sSL "https://golang.org/dl/?mode=json" \

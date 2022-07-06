@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Vim cheatsheet
 
@@ -37,6 +37,7 @@ tx   - jump to one character before the character x
 xp   - transpose two letters (delete and paste)
 <ip  - unindent paragraph
 >ip  - indent paragraph
+!ip  - send paragraph to shell command
 gq   - wrap selected lines
 gqap - wrap around paragraph
 gqip - wrap paragraph
@@ -52,11 +53,4 @@ zR   - open all folds
 zM   - close all folds
 zj   - move cursor to next fold
 zk   - move cursor to previous fold
-"
-
-
-# echo "dd   - delete the line
-# daf  - delete function
-# dif  - delete inner function
-# dw   - delete to beginning of next word
-# !ip  - send the paragraph to shell command"
+C-[FBUD] - forward/back, up/down"

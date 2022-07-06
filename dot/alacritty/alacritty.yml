@@ -1,4 +1,4 @@
-tabspaces: 2
+tabspaces: 4
 alt_send_esc: true
 background_opacity: 1.00
 live_config_reload: true
@@ -30,11 +30,11 @@ key_bindings:
 
 font:
   normal:
-    family: JetBrains Mono
-  bold:
-    family: JetBrains Mono
-  italic:
-    family: JetBrains Mono
+    family: JetBrainsMono Nerd Font Mono
+  bold:                             
+    family: JetBrainsMono Nerd Font Mono
+  italic:                           
+    family: JetBrainsMono Nerd Font Mono
   size: 13
   offset:
     x: 0

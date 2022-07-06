@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-exec lynx "https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=$(urlencode "$*")"
+open "https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=$(urlencode "$*")"
 

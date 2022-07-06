@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Attributions:
 # mphstudios https://github.com/mphstudios/macOS_setup/blob/master/defaults_write.sh

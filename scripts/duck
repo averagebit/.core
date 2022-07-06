@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-exec lynx "https://duckduckgo.com/lite?q=$(urlencode "$*")"
+open "https://duckduckgo.com/q=$(urlencode "$*")"
 

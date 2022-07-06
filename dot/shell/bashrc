@@ -22,14 +22,13 @@ export DOWNLOADS="${HOME}/Downloads"
 export PICTURES="${HOME}/Pictures"
 export PUBLIC="${HOME}/Public"
 export PRIVATE="${HOME}/Private"
-export PDFS="${GHREPOS}/pdfs"
 
 # Shell
 export TERM=xterm-256color
 export HRULEWIDTH=73
-export EDITOR_PREFIX=vi
+export EDITOR_PREFIX=nvim
 export EDITOR=nvim
-export VISUAL=vi
+export VISUAL=nvim
 export CLICOLOR=1
 export LSCOLORS="ExfxcxdxbxDxCxabagacad"
 export HISTCONTROL=ignoreboth
@@ -56,22 +55,55 @@ export CONTAINER_APP=docker
 export DOCKER_CONTENT_TRUST=0
 
 # Path
-export PATH="${SCRIPTS}:${HOME}/.local/share/cargo/bin:${HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-export CDPATH=".:${WORKSPACE}:${REPOS}:${GHREPOS}:${GLREPOS}:${CORE}:${HOME}"
+pathappend() {
+    declare arg
+    for arg in "$@"; do
+        test -d "$arg" || continue
+        PATH=${PATH//":$arg:"/:}
+        PATH=${PATH/#"$arg:"/}
+        PATH=${PATH/%":$arg"/}
+        export PATH="${PATH:+"$PATH:"}$arg"
+    done
+}
+
+pathprepend() {
+    for arg in "$@"; do
+        test -d "$arg" || continue
+        PATH=${PATH//:"$arg:"/:}
+        PATH=${PATH/#"$arg:"/}
+        PATH=${PATH/%":$arg"/}
+        export PATH="$arg${PATH:+":${PATH}"}"
+    done
+}
+
+pathprepend \
+    "${HOME}/.local/share/cargo/bin" \
+    "${HOME}/.local/bin" \
+    "${SCRIPTS}" 
+
+pathappend \
+  /usr/local/bin \
+  /usr/local/sbin \
+  /usr/local/games \
+  /usr/games \
+  /usr/sbin \
+  /usr/bin \
+  /snap/bin \
+  /sbin \
+  /bin
+
+export CDPATH=".:${HOME}:${CORE}:${WORKSPACE}:${REPOS}:${GHREPOS}:${GLREPOS}:${GHREPOS}/${USER}:${GLREPOS}/${USER}"
 
 # Dircolors
 if [[ $(command -v dircolors) ]]; then
-  if [[ -r "${HOME}/.dircolors" ]]; then
-    eval "$(dircolors -b "${HOME}/.dircolors")"
-  else
-    eval "$(dircolors -b)"
-  fi
+    if [[ -r "${HOME}/.dircolors" ]]; then
+        eval "$(dircolors -b "${HOME}/.dircolors")"
+    else
+        eval "$(dircolors -b)"
+    fi
 fi
 
-# }}}
-# Prompt {{{
-# ------
-
+# Prompt
 __prompt() {
   local username='\u' hostname='\h' character='❯' status="$?" status_color \
         git_branch format directory_prefix directory directory_suffix \
@@ -84,8 +116,6 @@ __prompt() {
   git_branch="$(git branch --show-current 2>/dev/null)"
 
   [[ "${status}" != 0 ]] && status_color="${r}"
-  [[ -f "/.dockerenv" || -n "${SSH_TTY}" ]] && directory_prefix="${g}${username}@${hostname}${w}:${d}"
-  [[ "${EUID}" == 0 ]] && character='#' && directory_prefix="${r}${username}@${hostname}${w}:${d}"
   [[ "${PWD}" == / ]] && directory="${b}/${d}"
   [[ "${PWD}" == "$HOME" ]] && directory="${b}~${d}"
   [[ "${PWD}" != $HOME* ]] && directory_suffix="🔒"
@@ -97,10 +127,7 @@ __prompt() {
 
 PROMPT_COMMAND="__prompt"
 
-# }}}
-# Aliases {{{
-# -------
-
+# Aliases
 unalias -a
 alias '?'='duck'
 alias '??'='google'
@@ -114,10 +141,7 @@ alias temp="cd $(mktemp -d)"
 alias tmux="tmux -f ${HOME}/.config/tmux/tmux.conf"
 alias chmox="chmod u+x"
 
-# }}}
-# Functions {{{
-# ---------
-
+# Functions
 reload() {
   source "${HOME}/.bashrc"
 
@@ -126,18 +150,15 @@ reload() {
   fi
 }
 
-# }}}
-# Completion {{{
-# ----------
-
-comp=(vis pdf)
+# Completion
+comp=(vis)
 
 for exe in ${comp[@]}; do complete -C "${exe}" "${exe}"; done
 
 # Source bash_completion
 if [[ $(command -v brew) ]]; then
-  if [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]]; then
-    source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+  if [[ -r "$(brew --prefix)/etc/bash_completion" ]]; then
+    source "$(brew --prefix)/etc/bash_completion"
   fi
 else
   if [[ -r "/etc/profile.d/bash_completion.sh" ]]; then
@@ -145,13 +166,5 @@ else
   fi
 fi
 
-# }}}
-# Source {{{
-# ------
-
 # Source private bashrc
 [[ -f "${HOME}/.bashrc_private" ]] && source "${HOME}/.bashrc_private"
-
-# }}}
-
-# vim: set foldenable foldmethod=marker ts=2 sw=2 tw=72 et :

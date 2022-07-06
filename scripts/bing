@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-exec lynx "www.bing.com/search?q=$(urlencode "$*")"
+open "www.bing.com/search?q=$(urlencode "$*")"
 

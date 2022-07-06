@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ -z "${SCRIPTS}" ]]; then
   echo "error: The \$SCRIPTS path environment variable is not set."

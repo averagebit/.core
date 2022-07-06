@@ -1,4 +1,0 @@
-#!/bin/bash
-
-curl https://corona-stats.online/"$1"
-
